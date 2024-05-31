@@ -3,7 +3,8 @@ import './App.css';
 import './app/ui/css/game.component.css';
 import './app/ui/css/movelist.component.css';
 import './app/ui/css/piece.component.css';
-import Square from './Square';
+import Piece from './Piece';
+import Board from './Board';
 
 function App() {
   return (
@@ -12,9 +13,7 @@ function App() {
         <p>
           Shallow Thought (React) starts here!
         </p>
-        <Square isLight={true}/>
-        <Square isLight={false} isHighlighed={true}/>
-        <Square isLight={true}/>
+        <Board game="" />
       </header>
     </div>
   );
