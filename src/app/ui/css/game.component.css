@@ -1,0 +1,40 @@
+.boardgrid {
+    display: -ms-grid;
+    display: grid;
+    grid-template-columns: 60px 60px 60px 60px 60px 60px 60px 60px;
+    -ms-grid-columns: 60px 60px 60px 60px 60px 60px 60px 60px;
+    -ms-grid-rows: 60px 60px 60px 60px 60px 60px 60px 60px;
+    position: absolute;
+}
+
+.boardsquare {
+    width: 60px;
+    height: 60px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+.selectedFromSquare {
+    border: 3px solid green;
+}
+
+.lightsquare {
+    background-color: blanchedalmond;
+}
+
+.darksquare {
+    background-color: burlywood;
+}
+
+.movelist {
+    border: 1px solid black;
+    position: absolute;
+    left: 500px;
+    height: 400px;
+    overflow-y: auto;
+}
+
+.toolbar {
+    padding: 10px;
+}

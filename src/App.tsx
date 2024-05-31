@@ -1,23 +1,20 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import './app/ui/css/game.component.css';
+import './app/ui/css/movelist.component.css';
+import './app/ui/css/piece.component.css';
+import Square from './Square';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
         <p>
           Shallow Thought (React) starts here!
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <Square isLight={true}/>
+        <Square isLight={false} isHighlighed={true}/>
+        <Square isLight={true}/>
       </header>
     </div>
   );
