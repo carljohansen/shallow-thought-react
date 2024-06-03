@@ -1,21 +1,22 @@
 import React, { FC } from 'react';
 import { SquareSelectedEvent } from './Game';
+import { BoardSquare } from './app/engine/ChessElements';
 
 interface SquareProps {
-    name: string,
+    boardSquare: BoardSquare,
     isLight: boolean,
     isHighlighed?: boolean,
     handleClick: (e: SquareSelectedEvent) => void
 }
 
-const Square: FC<SquareProps> = ({ name, isLight, handleClick, isHighlighed = false }) => {
+const Square: FC<SquareProps> = ({ boardSquare, isLight, handleClick, isHighlighed = false }) => {
 
     const squareClass = "boardsquare " + (isLight ? "lightsquare" : "darksquare") + (isHighlighed ? " selectedFromSquare" : "");
 
     return (
         <div className={squareClass} onClick={() => {
             const eventType = isHighlighed ? "squareDeselected" : "squareSelected";
-            handleClick(new CustomEvent(eventType, { detail: name }));
+            handleClick(new CustomEvent(eventType, { detail: boardSquare }));
         }} />
     )
 }

@@ -2,8 +2,9 @@ import * as Chess from './app/engine/ChessElements'
 import React from 'react';
 import Square from './Square';
 //import { PlayerBase } from './PlayerBase';
+import { BoardSquare } from './app/engine/ChessElements';
 
-export interface SquareSelectedEvent extends CustomEvent<string> { }
+export interface SquareSelectedEvent extends CustomEvent<BoardSquare> { }
 
 class Game extends React.Component {
 
@@ -15,7 +16,7 @@ class Game extends React.Component {
         };
     }
 
-    public get selectedFromSquare(): string {
+    public get selectedFromSquare(): BoardSquare {
         return this.state["selectedFromSquare"];
     }
 
@@ -26,7 +27,7 @@ class Game extends React.Component {
                 this.moveSelected(this.selectedFromSquare, selectedSquare);
             } else {
                 this.setState({ ...this.state, selectedFromSquare: selectedSquare });
-                console.log(`${event.detail}: ${event.type}.`);
+                console.log(`${event.detail.algebraicNotation}: ${event.type}.`);
             }
             return;
         }
@@ -36,8 +37,8 @@ class Game extends React.Component {
         console.log(`de-selected`);
     };
 
-    moveSelected(fromSquare: string, toSquare: string) {
-        console.log(`move selected for human player: ${fromSquare} to ${toSquare}.`);
+    moveSelected(fromSquare: BoardSquare, toSquare: BoardSquare) {
+        console.log(`move selected for human player: ${fromSquare.algebraicNotation} to ${toSquare.algebraicNotation}.`);
         this.setState({ ...this.state, selectedFromSquare: "" });
     }
 
@@ -46,10 +47,10 @@ class Game extends React.Component {
         for (var row = 0; row < 8; row++) {
             for (var col = 0; col < 8; col++) {
                 const squareName = `${String.fromCharCode(97 + col)}${String(8 - row)}`
-                const isSquareSelected = squareName === this.selectedFromSquare;
+                const isSquareSelected = squareName === this.selectedFromSquare.algebraicNotation;
                 squareDivs.push(
                     (<Square isLight={(row % 2) === (col % 2)}
-                        name={squareName}
+                        boardSquare={new BoardSquare(col + 1, 8 - row)}
                         isHighlighed={isSquareSelected}
                         handleClick={this.onSquareSelected} />)
                 )
