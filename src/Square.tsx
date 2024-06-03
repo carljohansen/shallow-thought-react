@@ -1,10 +1,11 @@
 import React, { FC } from 'react';
+import { SquareSelectedEvent } from './Game';
 
 interface SquareProps {
     name: string,
     isLight: boolean,
     isHighlighed?: boolean,
-    handleClick: React.MouseEventHandler<HTMLDivElement>
+    handleClick: (e: SquareSelectedEvent) => void
 }
 
 const Square: FC<SquareProps> = ({ name, isLight, handleClick, isHighlighed = false }) => {
@@ -12,7 +13,10 @@ const Square: FC<SquareProps> = ({ name, isLight, handleClick, isHighlighed = fa
     const squareClass = "boardsquare " + (isLight ? "lightsquare" : "darksquare") + (isHighlighed ? " selectedFromSquare" : "");
 
     return (
-        <div className={squareClass} onClick={handleClick} />
+        <div className={squareClass} onClick={() => {
+            const eventType = isHighlighed ? "squareDeselected" : "squareSelected";
+            handleClick(new CustomEvent(eventType, { detail: name }));
+        }} />
     )
 }
 

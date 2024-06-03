@@ -3,20 +3,45 @@ import React from 'react';
 import Square from './Square';
 //import { PlayerBase } from './PlayerBase';
 
+export interface SquareSelectedEvent extends CustomEvent<string> { }
+
 class Game extends React.Component {
 
-    constructor() {
-        super(null);
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            selectedFromSquare: ""
+        };
     }
 
-    private selectedFromSquare: string = "h8";
+    public get selectedFromSquare(): string {
+        return this.state["selectedFromSquare"];
+    }
 
-    render() {
-
-        function onSquareSelected(event: React.MouseEvent<HTMLDivElement, MouseEvent>): void {
-            this.selectedFromSquare = "a1";
+    onSquareSelected = (event: SquareSelectedEvent) => {
+        const selectedSquare = event.detail;
+        if (event.type === "squareSelected") {
+            if (!!this.selectedFromSquare) {
+                this.moveSelected(this.selectedFromSquare, selectedSquare);
+            } else {
+                this.setState({ ...this.state, selectedFromSquare: selectedSquare });
+                console.log(`${event.detail}: ${event.type}.`);
+            }
+            return;
         }
 
+        // De-selecting
+        this.setState({ ...this.state, selectedFromSquare: "" });
+        console.log(`de-selected`);
+    };
+
+    moveSelected(fromSquare: string, toSquare: string) {
+        console.log(`move selected for human player: ${fromSquare} to ${toSquare}.`);
+        this.setState({ ...this.state, selectedFromSquare: "" });
+    }
+
+    render() {
         const squareDivs: JSX.Element[] = [];
         for (var row = 0; row < 8; row++) {
             for (var col = 0; col < 8; col++) {
@@ -26,7 +51,7 @@ class Game extends React.Component {
                     (<Square isLight={(row % 2) === (col % 2)}
                         name={squareName}
                         isHighlighed={isSquareSelected}
-                        handleClick={onSquareSelected} />)
+                        handleClick={this.onSquareSelected} />)
                 )
             }
         }
