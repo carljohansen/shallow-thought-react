@@ -1,17 +1,18 @@
 import React, { FC } from 'react';
+import * as Chess from './app/engine/ChessElements';
 
 interface PieceProps {
     leftPx: number,
     topPx: number,
     isWhite: boolean,
-    pieceCode: string
+    pieceType: Chess.PieceType
 }
 
-const Piece: FC<PieceProps> = ({ leftPx, topPx, isWhite, pieceCode }) => {
+const Piece: FC<PieceProps> = ({ leftPx, topPx, isWhite, pieceType }) => {
 
     let imagePieceName: string;
-    switch (pieceCode) {
-        case "pawn":
+    switch (pieceType) {
+        case Chess.PieceType.Pawn:
             imagePieceName = "p";
             break;
         default:
