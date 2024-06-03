@@ -10,9 +10,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <p>
-          Shallow Thought (React) starts here!
-        </p>
+         
         <Board game="" />
       </header>
     </div>

@@ -15,6 +15,21 @@ const Piece: FC<PieceProps> = ({ leftPx, topPx, isWhite, pieceType }) => {
         case Chess.PieceType.Pawn:
             imagePieceName = "p";
             break;
+        case Chess.PieceType.Knight:
+            imagePieceName = "n";
+            break;
+        case Chess.PieceType.Bishop:
+            imagePieceName = "b";
+            break;
+        case Chess.PieceType.Rook:
+            imagePieceName = "r";
+            break;
+        case Chess.PieceType.Queen:
+            imagePieceName = "q";
+            break;
+        case Chess.PieceType.King:
+            imagePieceName = "k";
+            break;
         default:
             imagePieceName = "xx";
             break;
