@@ -1,69 +1,128 @@
 import * as Chess from './app/engine/ChessElements'
-import React from 'react';
+import React, { FC, useState } from 'react';
 import Square from './Square';
 //import { PlayerBase } from './PlayerBase';
 import { BoardSquare } from './app/engine/ChessElements';
+import Piece from './Piece';
 
 export interface SquareSelectedEvent extends CustomEvent<BoardSquare> { }
 
-class Game extends React.Component {
+interface GameProps {
+    gameBoard: Chess.Board
+}
 
-    constructor(props) {
-        super(props);
+const Game: FC<GameProps> = ({ gameBoard }) => {
 
-        this.state = {
-            selectedFromSquare: ""
-        };
-    }
+    const [selectedFromSquare, setSelectedFromSquare] = useState<BoardSquare>(null);
 
-    public get selectedFromSquare(): BoardSquare {
-        return this.state["selectedFromSquare"];
-    }
-
-    onSquareSelected = (event: SquareSelectedEvent) => {
+    const onSquareSelected = (event: SquareSelectedEvent) => {
         const selectedSquare = event.detail;
         if (event.type === "squareSelected") {
-            if (!!this.selectedFromSquare) {
-                this.moveSelected(this.selectedFromSquare, selectedSquare);
+            if (!!selectedFromSquare) {
+                moveSelected(selectedFromSquare, selectedSquare);
             } else {
-                this.setState({ ...this.state, selectedFromSquare: selectedSquare });
+                setSelectedFromSquare(selectedSquare);
                 console.log(`${event.detail.algebraicNotation}: ${event.type}.`);
             }
             return;
         }
 
         // De-selecting
-        this.setState({ ...this.state, selectedFromSquare: "" });
+        setSelectedFromSquare(null);
         console.log(`de-selected`);
     };
 
-    moveSelected(fromSquare: BoardSquare, toSquare: BoardSquare) {
+    const moveSelected = (fromSquare: BoardSquare, toSquare: BoardSquare) => {
         console.log(`move selected for human player: ${fromSquare.algebraicNotation} to ${toSquare.algebraicNotation}.`);
-        this.setState({ ...this.state, selectedFromSquare: "" });
+        setSelectedFromSquare(null);
     }
 
-    render() {
-        const squareDivs: JSX.Element[] = [];
-        for (var row = 0; row < 8; row++) {
-            for (var col = 0; col < 8; col++) {
-                const squareName = `${String.fromCharCode(97 + col)}${String(8 - row)}`
-                const isSquareSelected = squareName === this.selectedFromSquare.algebraicNotation;
-                squareDivs.push(
-                    (<Square isLight={(row % 2) === (col % 2)}
-                        boardSquare={new BoardSquare(col + 1, 8 - row)}
-                        isHighlighed={isSquareSelected}
-                        handleClick={this.onSquareSelected} />)
-                )
-            }
+    const squareDivs: JSX.Element[] = [];
+    for (var row = 0; row < 8; row++) {
+        for (var col = 0; col < 8; col++) {
+            const squareName = `${String.fromCharCode(97 + col)}${String(8 - row)}`
+            const isSquareSelected = squareName === selectedFromSquare?.algebraicNotation;
+            squareDivs.push(
+                (<Square key={row * 8 + col}
+                    isLight={(row % 2) === (col % 2)}
+                    boardSquare={new BoardSquare(col + 1, 8 - row)}
+                    isHighlighed={isSquareSelected}
+                    handleClick={onSquareSelected} />)
+            )
         }
-
-        return (
-            <div className="boardgrid">
-                {squareDivs}
-            </div>
-        )
     }
+
+    const pieceElements: JSX.Element[] = [];
+    gameBoard.forEachOccupiedSquare(os => pieceElements.push(
+        <Piece key={os.square.index} occupiedSquare={os} />
+    ));
+
+    return (
+        <div className="boardgrid">
+            {squareDivs}
+            {pieceElements}
+        </div>
+    )
 }
+
+// class Game2 extends React.Component {
+
+//     constructor(props) {
+//         super(props);
+
+//         this.state = {
+//             selectedFromSquare: ""
+//         };
+//     }
+
+//     public get selectedFromSquare(): BoardSquare {
+//         return this.state["selectedFromSquare"];
+//     }
+
+//     onSquareSelected = (event: SquareSelectedEvent) => {
+//         const selectedSquare = event.detail;
+//         if (event.type === "squareSelected") {
+//             if (!!this.selectedFromSquare) {
+//                 this.moveSelected(this.selectedFromSquare, selectedSquare);
+//             } else {
+//                 this.setState({ ...this.state, selectedFromSquare: selectedSquare });
+//                 console.log(`${event.detail.algebraicNotation}: ${event.type}.`);
+//             }
+//             return;
+//         }
+
+//         // De-selecting
+//         this.setState({ ...this.state, selectedFromSquare: "" });
+//         console.log(`de-selected`);
+//     };
+
+//     moveSelected(fromSquare: BoardSquare, toSquare: BoardSquare) {
+//         console.log(`move selected for human player: ${fromSquare.algebraicNotation} to ${toSquare.algebraicNotation}.`);
+//         this.setState({ ...this.state, selectedFromSquare: "" });
+//     }
+
+//     render() {
+//         const squareDivs: JSX.Element[] = [];
+//         for (var row = 0; row < 8; row++) {
+//             for (var col = 0; col < 8; col++) {
+//                 const squareName = `${String.fromCharCode(97 + col)}${String(8 - row)}`
+//                 const isSquareSelected = squareName === this.selectedFromSquare.algebraicNotation;
+//                 squareDivs.push(
+//                     (<Square isLight={(row % 2) === (col % 2)}
+//                         boardSquare={new BoardSquare(col + 1, 8 - row)}
+//                         isHighlighed={isSquareSelected}
+//                         handleClick={this.onSquareSelected} />)
+//                 )
+//             }
+//         }
+
+//         return (
+//             <div className="boardgrid">
+//                 {squareDivs}
+//             </div>
+//         )
+//     }
+// }
 
 // interface GameProps { game?: any }
 

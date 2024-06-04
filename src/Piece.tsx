@@ -2,16 +2,13 @@ import React, { FC } from 'react';
 import * as Chess from './app/engine/ChessElements';
 
 interface PieceProps {
-    leftPx: number,
-    topPx: number,
-    isWhite: boolean,
-    pieceType: Chess.PieceType
+    occupiedSquare: Chess.OccupiedSquare
 }
 
-const Piece: FC<PieceProps> = ({ leftPx, topPx, isWhite, pieceType }) => {
+const Piece: FC<PieceProps> = ({ occupiedSquare }) => {
 
     let imagePieceName: string;
-    switch (pieceType) {
+    switch (occupiedSquare.piece.piece) {
         case Chess.PieceType.Pawn:
             imagePieceName = "p";
             break;
@@ -35,7 +32,9 @@ const Piece: FC<PieceProps> = ({ leftPx, topPx, isWhite, pieceType }) => {
             break;
     }
 
-    const imageName = `/img/${imagePieceName}${isWhite ? 'l' : 'd'}.png`;
+    const imageName = `/img/${imagePieceName}${occupiedSquare.piece.player === Chess.Player.White ? 'l' : 'd'}.png`;
+    const leftPx = (occupiedSquare.square.file - 1) * 60;
+    const topPx = (8 - occupiedSquare.square.rank) * 60;
     return (
         <img alt="" className="piece" src={imageName} style={{ left: `${leftPx}px`, top: `${topPx}px` }}></img >
     )
