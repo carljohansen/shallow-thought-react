@@ -1,18 +1,20 @@
 import * as Chess from './app/engine/ChessElements'
 import React, { FC, useState } from 'react';
 import Square from './Square';
-//import { PlayerBase } from './PlayerBase';
-import { BoardSquare } from './app/engine/ChessElements';
+import { BoardSquare, GameMove } from './app/engine/ChessElements';
 import Piece from './Piece';
 
 export interface SquareSelectedEvent extends CustomEvent<BoardSquare> { }
 
+export interface MoveSelectedEvent extends CustomEvent<GameMove> { }
+
 interface GameProps {
     gameBoard: Chess.Board,
-    newMove?: Chess.GameMove
+    newMove?: Chess.GameMove,
+    handleMoveInput: (e: MoveSelectedEvent) => void
 }
 
-const Game: FC<GameProps> = ({ gameBoard, newMove = null }) => {
+const Game: FC<GameProps> = ({ gameBoard, handleMoveInput, newMove = null }) => {
 
     const [selectedFromSquare, setSelectedFromSquare] = useState<BoardSquare>(null);
 
@@ -34,7 +36,15 @@ const Game: FC<GameProps> = ({ gameBoard, newMove = null }) => {
     };
 
     const moveSelected = (fromSquare: BoardSquare, toSquare: BoardSquare) => {
-        console.log(`move selected for human player: ${fromSquare.algebraicNotation} to ${toSquare.algebraicNotation}.`);
+        const validatedMove = gameBoard.isLegalMove({ fromSquare: fromSquare, toSquare: toSquare });
+        if (!!validatedMove) {
+            console.log(`move selected for human player: ${fromSquare.algebraicNotation} to ${toSquare.algebraicNotation}.`);
+            console.log(validatedMove);
+            handleMoveInput(new CustomEvent("humanMove", { detail: validatedMove }));
+        } else {
+            console.log("Invalid move!")
+        }
+
         setSelectedFromSquare(null);
     }
 
@@ -55,7 +65,7 @@ const Game: FC<GameProps> = ({ gameBoard, newMove = null }) => {
 
     const pieceElements: JSX.Element[] = [];
     gameBoard.forEachOccupiedSquare(os => pieceElements.push(
-        <Piece key={os.square.index} occupiedSquare={os} animatingMove={newMove} />
+        <Piece key={os.square.index} occupiedSquare={os} />
     ));
 
     return (

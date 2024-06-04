@@ -1,5 +1,5 @@
 ﻿import * as Chess from './ChessElements';
-
+ 
 export default class MoveGenerator {
 
     private static knightVectors = [[-2, -1], [-2, 1], [2, -1], [2, 1],
