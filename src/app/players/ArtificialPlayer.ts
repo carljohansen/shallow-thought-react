@@ -15,7 +15,7 @@ export class ArtificialPlayer extends PlayerBase {
     activate(board: Chess.Board): void {
 
         if (!this.engineWorker) {
-            this.engineWorker = new Worker("/engine.bundle.js");
+            this.engineWorker = new Worker(new URL('../../artificialPlayerDispatch.ts', import.meta.url));
             this.engineWorker.onmessage = this.onMoveDecision;
         }
         this.progress$.next(0);

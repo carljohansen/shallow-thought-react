@@ -1,6 +1,5 @@
 ﻿import { Subject } from 'rxjs';
 import * as Chess from './ChessElements';
-import MoveGenerator from './MoveGenerator';
 
 export interface MoveWithReplies {
     move: Chess.GameMove;
@@ -14,8 +13,7 @@ interface EvaluatedMove {
 
 export class ComputerPlayer {
 
-    public calculationProgress$ : Subject<number>
-    //calculationProgress: EventEmitter<number> = new EventEmitter();
+    public calculationProgress$: Subject<number> = new Subject<number>();
 
     public getMovesAndReplies(board: Chess.Board, headStartMoves: Chess.GameMove[]): MoveWithReplies[] {
 
@@ -94,7 +92,7 @@ export class ComputerPlayer {
             if (!bestMoveSoFar
                 || ComputerPlayer.isBetterScore(lineEvaluation, bestScoreSoFar, board.isWhiteToMove)) {
                 bestScoreSoFar = lineEvaluation;
-                bestMoveSoFar = move.move;                
+                bestMoveSoFar = move.move;
             }
 
             if (alphaScore !== null
