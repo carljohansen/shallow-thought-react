@@ -1,9 +1,9 @@
+import * as Chess from './app/engine/ChessElements'
 import React, { FC } from 'react';
 import { SquareSelectedEvent } from './Game';
-import { BoardSquare } from './app/engine/ChessElements';
 
 interface SquareProps {
-    boardSquare: BoardSquare,
+    boardSquare: Chess.BoardSquare,
     isLight: boolean,
     isHighlighed?: boolean,
     handleClick: (e: SquareSelectedEvent) => void
@@ -11,7 +11,7 @@ interface SquareProps {
 
 const Square: FC<SquareProps> = ({ boardSquare, isLight, handleClick, isHighlighed = false }) => {
 
-    const squareClass = "boardsquare " + (isLight ? "lightsquare" : "darksquare") + (isHighlighed ? " selectedFromSquare" : "");
+    const squareClass = "boardsquare " + (isLight ? "lightsquare" : "darksquare") + (isHighlighed ? " selectedFromSquare" : "");    
 
     return (
         <div className={squareClass} onClick={() => {

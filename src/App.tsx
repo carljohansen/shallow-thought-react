@@ -50,12 +50,14 @@ function App() {
           + Chess.CastlingPotential.WhiteQueenside);
 
   const gameBoard = createStandardBoard();
+  const firstMoves =gameBoard.getPotentialMoves();
+  const firstMove = firstMoves[9];
  
 return (
     <div className="App">
       <header className="App-header">
 
-        <Game gameBoard={gameBoard} />
+        <Game gameBoard={gameBoard} newMove={firstMove} />
       </header>
     </div>
   );

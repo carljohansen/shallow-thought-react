@@ -1,11 +1,16 @@
 import React, { FC } from 'react';
+import { motion } from "framer-motion";
 import * as Chess from './app/engine/ChessElements';
 
 interface PieceProps {
-    occupiedSquare: Chess.OccupiedSquare
+    occupiedSquare: Chess.OccupiedSquare,
+    animatingMove?: Chess.GameMove
 }
 
-const Piece: FC<PieceProps> = ({ occupiedSquare }) => {
+const Piece: FC<PieceProps> = ({ occupiedSquare, animatingMove }) => {
+
+    const isInPrimaryAnimation = !!animatingMove
+        && animatingMove.fromSquare.index === occupiedSquare.square.index;
 
     let imagePieceName: string;
     switch (occupiedSquare.piece.piece) {
@@ -35,8 +40,19 @@ const Piece: FC<PieceProps> = ({ occupiedSquare }) => {
     const imageName = `/img/${imagePieceName}${occupiedSquare.piece.player === Chess.Player.White ? 'l' : 'd'}.png`;
     const leftPx = (occupiedSquare.square.file - 1) * 60;
     const topPx = (8 - occupiedSquare.square.rank) * 60;
+    const initialPos = { left: `${leftPx}px`, top: `${topPx}px` };
+
+    if (isInPrimaryAnimation) {
+        const leftPx = (animatingMove.toSquare.file - 1) * 60;
+        const topPx = (8 - animatingMove.toSquare.rank) * 60;
+        const destPos = { left: `${leftPx}px`, top: `${topPx}px` };
+        return (
+            <motion.img alt="" className="piece" src={imageName} style={initialPos} animate={destPos}></motion.img>
+        )
+    }
+
     return (
-        <img alt="" className="piece" src={imageName} style={{ left: `${leftPx}px`, top: `${topPx}px` }}></img >
+        <img alt="" className="piece" src={imageName} style={initialPos}></img >
     )
 }
 

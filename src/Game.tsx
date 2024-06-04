@@ -8,10 +8,11 @@ import Piece from './Piece';
 export interface SquareSelectedEvent extends CustomEvent<BoardSquare> { }
 
 interface GameProps {
-    gameBoard: Chess.Board
+    gameBoard: Chess.Board,
+    newMove?: Chess.GameMove
 }
 
-const Game: FC<GameProps> = ({ gameBoard }) => {
+const Game: FC<GameProps> = ({ gameBoard, newMove = null }) => {
 
     const [selectedFromSquare, setSelectedFromSquare] = useState<BoardSquare>(null);
 
@@ -54,7 +55,7 @@ const Game: FC<GameProps> = ({ gameBoard }) => {
 
     const pieceElements: JSX.Element[] = [];
     gameBoard.forEachOccupiedSquare(os => pieceElements.push(
-        <Piece key={os.square.index} occupiedSquare={os} />
+        <Piece key={os.square.index} occupiedSquare={os} animatingMove={newMove} />
     ));
 
     return (
