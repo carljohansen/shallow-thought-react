@@ -9,6 +9,7 @@ import MoveList from './MoveList';
 import { ISingleMovePlayer, MoveEvent, ProgressUpdatedEvent } from './app/players/PlayerInterface';
 import { GameHelper } from './app/engine/GameHelper';
 import { PlayerFactory } from './app/players/PlayerFactory';
+import MoveProgressBar from './MoveProgressBar';
 
 Chess.BoardResources.init();
 
@@ -17,6 +18,7 @@ const initialBoard = GameHelper.createStandardBoard();
 function App() {
 
   const [newMove, setNewMove] = useState<Chess.GameMove>(null);
+  const [evaluationProgress, setEvaluationProgress] = useState<number>(0);
   const [moveList, setMoveList] = useState<Chess.GameMove[]>([]);
   const [board, setBoard] = useState<Chess.Board>(initialBoard);
   const [player, setPlayer] = useState<ISingleMovePlayer>(null);
@@ -66,18 +68,20 @@ function App() {
 
     if (playersBoard.isWhiteToMove) {
       singleMovePlayer = PlayerFactory.createHumanPlayerForSingleMove(playersBoard,
-        handleMoveMade
+        handleMoveMade,
+        handleProgressUpdate
       );
     } else {
       singleMovePlayer = PlayerFactory.createArtificalPlayerForSingleMove(playersBoard,
         handleMoveMade,
-
-        (e: ProgressUpdatedEvent) => {
-          //console.log("progress: " + e.detail);
-        }
+        handleProgressUpdate
       );
     }
     return singleMovePlayer;
+  }
+
+  function handleProgressUpdate(e: ProgressUpdatedEvent) {
+    setEvaluationProgress(e.detail);
   }
 
   const onHumanMoveSelected = (event: MoveSelectedEvent) => {
@@ -102,7 +106,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <div style={{ position: "absolute", top: "0px", left: "0px", height: "80px" }}>
-          <button title="Start Game" onClick={setPlayerForFirstMove}>Start Game</button>
+          <MoveProgressBar progress={evaluationProgress}></MoveProgressBar>
         </div>
         <div style={{ position: "absolute", top: "50px", left: "0px", height: "80px" }}>
           <MoveList moveList={moveList}></MoveList>

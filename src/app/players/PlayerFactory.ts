@@ -15,10 +15,12 @@ export class PlayerFactory {
     }
 
     public static createHumanPlayerForSingleMove(board: Chess.Board,
-        handleMove: (e: MoveEvent) => void): ISingleMovePlayer {
+        handleMove: (e: MoveEvent) => void,
+        handleProgress: (e: ProgressUpdatedEvent) => void): ISingleMovePlayer {
 
         return new HumanSingleMovePlayer(board,
-            handleMove);
+            handleMove,
+            handleProgress);
     }
 }
 
