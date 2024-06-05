@@ -20,11 +20,11 @@ function App() {
 
   useEffect(() => {
     if (player) {
-      player.activate();
+      player.activate(); // Mainly this is to start a new engine player calculating.
     }
   }, [player]);
 
-  function createPlayerForNextMove(playersBoard:Chess.Board): ISingleMovePlayer {
+  function createPlayerForNextMove(playersBoard: Chess.Board): ISingleMovePlayer {
 
     const singleMovePlayer = PlayerFactory.createArtificalPlayerForSingleMove(playersBoard,
       (e: MoveEvent) => {
@@ -57,7 +57,7 @@ function App() {
 
         singleMovePlayer.dispose();
 
-        setPlayer(createPlayerForNextMove(newBoard));
+        setPlayerForNextMove(newBoard);
       },
 
       (e: ProgressUpdatedEvent) => {
@@ -68,43 +68,25 @@ function App() {
     return singleMovePlayer;
   }
 
-  // const [gameSession, setGameSession] = useState<GameSession>(() => {
-
-
-  //   const whitePlayer = new ArtificialPlayer(Chess.Player.White);
-  //   const blackPlayer = new ArtificialPlayer(Chess.Player.Black);
-  //   const newGame = GameSession.createStandardGame(whitePlayer, blackPlayer);
-
-  //   newGame.whitePlayer.activate(newGame.board);
-
-  //   newGame.movePlayed$.subscribe(move => {
-  //     setNewMove(move);
-  //   })
-  //   return newGame;
-  // });
-
-
   const onHumanMoveSelected = (event: MoveSelectedEvent) => {
     // const newBoard = gameBoard.applyMove(event.detail);
     // setGameBoard(newBoard);
     // setNewMove(event.detail);
   }
 
-  //setGameBoard(createStandardBoard());
-  // if (board.moveCount > 0) {
-  //   startNextMove();
-  // }
+  function setPlayerForFirstMove() {
+    setPlayerForNextMove(board);
+  }
 
-  function handleStartGame() {
-    setPlayer(createPlayerForNextMove(board));
-    //singleMovePlayer.activate();
+  function setPlayerForNextMove(newBoard: Chess.Board) {
+    setPlayer(createPlayerForNextMove(newBoard));
   }
 
   return (
     <div className="App">
       <header className="App-header">
         <div style={{ position: "absolute", top: "0px", left: "0px", height: "80px" }}>
-          <button title="Start Game" onClick={handleStartGame}>Start Game</button>
+          <button title="Start Game" onClick={setPlayerForFirstMove}>Start Game</button>
         </div>
         <Game gameBoard={board} newMove={newMove} handleMoveInput={onHumanMoveSelected} />
       </header>
