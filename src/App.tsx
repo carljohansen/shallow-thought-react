@@ -56,7 +56,7 @@ function App() {
       const newBoard = playersBoard.applyMove(validatedMove);
       setBoard(newBoard);
       setMoveList(curr => [...curr, validatedMove])
-      validatedMove.checkHint = playersBoard.getCheckState();
+      validatedMove.checkHint = newBoard.getCheckState();
       //this.moveHistory.push(validatedMove);
 
       singleMovePlayer.dispose();
