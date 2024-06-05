@@ -16,7 +16,6 @@ interface GameProps {
 
 const Game: FC<GameProps> = ({ gameBoard, handleMoveInput, newMove = null }) => {
 
-    console.log("Game rendered");
     const [selectedFromSquare, setSelectedFromSquare] = useState<BoardSquare>(null);
 
     const onSquareSelected = (event: SquareSelectedEvent) => {

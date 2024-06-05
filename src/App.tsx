@@ -14,21 +14,18 @@ const initialBoard = GameSession.createStandardBoard();
 
 function App() {
 
-  console.log("App rendered");
   const [newMove, setNewMove] = useState<Chess.GameMove>(null);
   const [board, setBoard] = useState<Chess.Board>(initialBoard);
   const [player, setPlayer] = useState<ISingleMovePlayer>(null);
 
   useEffect(() => {
     if (player) {
-      console.log("Activating player for next move.");
       player.activate();
     }
   }, [player]);
 
   function createPlayerForNextMove(playersBoard:Chess.Board): ISingleMovePlayer {
 
-    console.log("calling createPlayerForNextMove");
     const singleMovePlayer = PlayerFactory.createArtificalPlayerForSingleMove(playersBoard,
       (e: MoveEvent) => {
         const move = e.detail;

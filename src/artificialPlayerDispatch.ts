@@ -9,7 +9,6 @@ const thisSelf = self as any;
 onmessage = function (event) {
 
     const id = Math.round(Math.random() * 1000000);
-    console.log(`this is worker ${id}`);
 
     Chess.BoardResources.init();
 
@@ -26,6 +25,5 @@ onmessage = function (event) {
 
     // Send our selected move back to the main thread.
     /* eslint-disable-next-line no-restricted-globals */
-    console.log(`move made by worker ${id}`);
     thisSelf.postMessage(selectedMove);
 }
