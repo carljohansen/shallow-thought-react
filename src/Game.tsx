@@ -25,21 +25,17 @@ const Game: FC<GameProps> = ({ gameBoard, handleMoveInput, newMove = null }) => 
                 moveSelected(selectedFromSquare, selectedSquare);
             } else {
                 setSelectedFromSquare(selectedSquare);
-                console.log(`${event.detail.algebraicNotation}: ${event.type}.`);
             }
             return;
         }
 
         // De-selecting
         setSelectedFromSquare(null);
-        console.log(`de-selected`);
     };
 
     const moveSelected = (fromSquare: BoardSquare, toSquare: BoardSquare) => {
         const validatedMove = gameBoard.isLegalMove({ fromSquare: fromSquare, toSquare: toSquare });
         if (!!validatedMove) {
-            console.log(`move selected for human player: ${fromSquare.algebraicNotation} to ${toSquare.algebraicNotation}.`);
-            console.log(validatedMove);
             handleMoveInput(new CustomEvent("humanMove", { detail: validatedMove }));
         } else {
             console.log("Invalid move!")
