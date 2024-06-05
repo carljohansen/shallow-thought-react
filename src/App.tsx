@@ -6,18 +6,30 @@ import './app/ui/css/movelist.component.css';
 import './app/ui/css/piece.component.css';
 import Game, { MoveSelectedEvent } from './Game';
 import { GameSession } from './app/players/GameSession';
-import { MoveEvent, PlayerFactory, ProgressUpdatedEvent } from './app/players/PlayerBase';
+import { ISingleMovePlayer, MoveEvent, PlayerFactory, ProgressUpdatedEvent } from './app/players/PlayerBase';
+
+Chess.BoardResources.init();
+
+const initialBoard = GameSession.createStandardBoard();
 
 function App() {
 
-  Chess.BoardResources.init();
-
+  console.log("App rendered");
   const [newMove, setNewMove] = useState<Chess.GameMove>(null);
-  const [board, setBoard] = useState<Chess.Board>(() => GameSession.createStandardBoard());
+  const [board, setBoard] = useState<Chess.Board>(initialBoard);
+  const [player, setPlayer] = useState<ISingleMovePlayer>(null);
 
-  function startNextMove() {
+  useEffect(() => {
+    if (player) {
+      console.log("Activating player for next move.");
+      player.activate();
+    }
+  }, [player]);
 
-    const singleMovePlayer = PlayerFactory.createArtificalPlayerForSingleMove(board,
+  function createPlayerForNextMove(playersBoard:Chess.Board): ISingleMovePlayer {
+
+    console.log("calling createPlayerForNextMove");
+    const singleMovePlayer = PlayerFactory.createArtificalPlayerForSingleMove(playersBoard,
       (e: MoveEvent) => {
         const move = e.detail;
         console.log(`Move made: ${move.fromSquare.algebraicNotation} to ${move.toSquare.algebraicNotation}`);
@@ -28,7 +40,7 @@ function App() {
           return null;
         }
 
-        let validatedMove = board.isLegalMove(move);
+        let validatedMove = playersBoard.isLegalMove(move);
         if (!validatedMove) {
           alert("That move is not legal..");
           // TODO: fix this
@@ -38,24 +50,26 @@ function App() {
         }
 
         // Annotate the move with disambiguation information (this improves our move list display).
-        validatedMove.disambiguationSquare = board.getMoveDisambiguationSquare(validatedMove);
+        validatedMove.disambiguationSquare = playersBoard.getMoveDisambiguationSquare(validatedMove);
 
-      //  setBoard(board.applyMove(validatedMove));
+        const newBoard = playersBoard.applyMove(validatedMove);
+        setBoard(newBoard);
 
-        validatedMove.checkHint = board.getCheckState();
+        validatedMove.checkHint = playersBoard.getCheckState();
         //this.moveHistory.push(validatedMove);
 
         singleMovePlayer.dispose();
+
+        setPlayer(createPlayerForNextMove(newBoard));
       },
+
       (e: ProgressUpdatedEvent) => {
         //console.log("progress: " + e.detail);
       }
     );
 
-    singleMovePlayer.activate();
+    return singleMovePlayer;
   }
-
-  useEffect(startNextMove, [board]);
 
   // const [gameSession, setGameSession] = useState<GameSession>(() => {
 
@@ -80,10 +94,21 @@ function App() {
   }
 
   //setGameBoard(createStandardBoard());
+  // if (board.moveCount > 0) {
+  //   startNextMove();
+  // }
+
+  function handleStartGame() {
+    setPlayer(createPlayerForNextMove(board));
+    //singleMovePlayer.activate();
+  }
 
   return (
     <div className="App">
       <header className="App-header">
+        <div style={{ position: "absolute", top: "0px", left: "0px", height: "80px" }}>
+          <button title="Start Game" onClick={handleStartGame}>Start Game</button>
+        </div>
         <Game gameBoard={board} newMove={newMove} handleMoveInput={onHumanMoveSelected} />
       </header>
     </div>

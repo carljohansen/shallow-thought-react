@@ -219,6 +219,8 @@ export class Board {
 
     public enPassantActiveFile: number;
 
+    public moveCount: number;
+
     public static create(whitePieces: { square: string, piece: PieceType }[],
         blackPieces: { square: string, piece: PieceType }[],
         isWhiteToMove: boolean, castlingStatus: number) {
@@ -236,6 +238,7 @@ export class Board {
         newBoard.isWhiteToMove = isWhiteToMove;
         newBoard.castlingStatus = castlingStatus;
         newBoard.enPassantActiveFile = 0;
+        newBoard.moveCount = 0;
         return newBoard;
     }
 
@@ -443,6 +446,7 @@ export class Board {
         }
 
         newBoard.isWhiteToMove = !this.isWhiteToMove;
+        newBoard.moveCount = this.moveCount + 1;
         return newBoard;
     }
 

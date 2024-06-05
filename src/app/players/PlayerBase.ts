@@ -73,8 +73,8 @@ class ArtificialSingleMovePlayer implements ISingleMovePlayer {
 
     activate(): void {
 
-        console.log("callign activate");
         if (!this.engineWorker) {
+            console.log("ArtificialPlayer activate is creating another engineWorker.");
             this.engineWorker = new Worker(new URL('../../artificialPlayerDispatch.ts', import.meta.url));
             this.engineWorker.onmessage = this.onMoveDecision;
         }
@@ -108,6 +108,7 @@ class ArtificialSingleMovePlayer implements ISingleMovePlayer {
 
     public dispose(): void {
         if (this.engineWorker) {
+            console.log("engineworker disposed. ");
             this.engineWorker.terminate();
             this.engineWorker = undefined;
         }
