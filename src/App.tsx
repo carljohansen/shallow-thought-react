@@ -1,31 +1,76 @@
 import * as Chess from './app/engine/ChessElements'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 import './app/ui/css/game.component.css';
 import './app/ui/css/movelist.component.css';
 import './app/ui/css/piece.component.css';
 import Game, { MoveSelectedEvent } from './Game';
 import { GameSession } from './app/players/GameSession';
-import { ArtificialPlayer } from './app/players/ArtificialPlayer';
+import { MoveEvent, PlayerFactory, ProgressUpdatedEvent } from './app/players/PlayerBase';
 
-function App() {  
+function App() {
+
+  Chess.BoardResources.init();
 
   const [newMove, setNewMove] = useState<Chess.GameMove>(null);
-  const [gameSession, setGameSession] = useState<GameSession>(() => {
+  const [board, setBoard] = useState<Chess.Board>(() => GameSession.createStandardBoard());
 
-    Chess.BoardResources.init();
+  function startNextMove() {
 
-    const whitePlayer = new ArtificialPlayer(Chess.Player.White);
-    const blackPlayer = new ArtificialPlayer(Chess.Player.Black);
-    const newGame = GameSession.createStandardGame(whitePlayer, blackPlayer);
+    const singleMovePlayer = PlayerFactory.createArtificalPlayerForSingleMove(board,
+      (e: MoveEvent) => {
+        const move = e.detail;
+        console.log(`Move made: ${move.fromSquare.algebraicNotation} to ${move.toSquare.algebraicNotation}`);
+        setNewMove(e.detail);
 
-    newGame.whitePlayer.activate(newGame.board);
+        if (!move) {
+          alert("Game over!");
+          return null;
+        }
 
-    newGame.movePlayed$.subscribe(move => {
-      setNewMove(move);
-    })
-    return newGame;
-  });
+        let validatedMove = board.isLegalMove(move);
+        if (!validatedMove) {
+          alert("That move is not legal..");
+          // TODO: fix this
+          //this.activePlayer.deactivate();
+          //this.activePlayer.activate(this.board);
+          return null;
+        }
+
+        // Annotate the move with disambiguation information (this improves our move list display).
+        validatedMove.disambiguationSquare = board.getMoveDisambiguationSquare(validatedMove);
+
+      //  setBoard(board.applyMove(validatedMove));
+
+        validatedMove.checkHint = board.getCheckState();
+        //this.moveHistory.push(validatedMove);
+
+        singleMovePlayer.dispose();
+      },
+      (e: ProgressUpdatedEvent) => {
+        //console.log("progress: " + e.detail);
+      }
+    );
+
+    singleMovePlayer.activate();
+  }
+
+  useEffect(startNextMove, [board]);
+
+  // const [gameSession, setGameSession] = useState<GameSession>(() => {
+
+
+  //   const whitePlayer = new ArtificialPlayer(Chess.Player.White);
+  //   const blackPlayer = new ArtificialPlayer(Chess.Player.Black);
+  //   const newGame = GameSession.createStandardGame(whitePlayer, blackPlayer);
+
+  //   newGame.whitePlayer.activate(newGame.board);
+
+  //   newGame.movePlayed$.subscribe(move => {
+  //     setNewMove(move);
+  //   })
+  //   return newGame;
+  // });
 
 
   const onHumanMoveSelected = (event: MoveSelectedEvent) => {
@@ -39,7 +84,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <Game gameBoard={gameSession.board} newMove={newMove} handleMoveInput={onHumanMoveSelected} />
+        <Game gameBoard={board} newMove={newMove} handleMoveInput={onHumanMoveSelected} />
       </header>
     </div>
   );

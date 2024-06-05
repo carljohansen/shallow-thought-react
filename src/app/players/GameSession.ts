@@ -91,7 +91,12 @@ export class GameSession {
 
     public static createStandardGame(whitePlayer: PlayerBase, blackPlayer: PlayerBase): GameSession {
 
-        const standardBoard = Chess.Board.create([{ square: "a1", piece: Chess.PieceType.Rook },
+        const standardBoard = this.createStandardBoard();
+        return GameSession.createGame(whitePlayer, blackPlayer, standardBoard);
+    }
+
+    public static createStandardBoard() {
+        return Chess.Board.create([{ square: "a1", piece: Chess.PieceType.Rook },
         { square: "b1", piece: Chess.PieceType.Knight },
         { square: "c1", piece: Chess.PieceType.Bishop },
         { square: "d1", piece: Chess.PieceType.Queen },
@@ -126,7 +131,6 @@ export class GameSession {
             { square: "h7", piece: Chess.PieceType.Pawn }],
             true, Chess.CastlingPotential.BlackKingside + Chess.CastlingPotential.BlackQueenside + Chess.CastlingPotential.WhiteKingside + Chess.CastlingPotential.WhiteQueenside);
 
-        return GameSession.createGame(whitePlayer, blackPlayer, standardBoard);
     }
 
     public static createCustomGame(whitePlayer: PlayerBase, blackPlayer: PlayerBase): GameSession {

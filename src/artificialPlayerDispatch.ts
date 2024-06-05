@@ -8,6 +8,9 @@ const thisSelf = self as any;
 
 onmessage = function (event) {
 
+    const id = Math.round(Math.random() * 1000000);
+    console.log(`this is worker ${id}`);
+
     Chess.BoardResources.init();
 
     // Marshall the Board object that we have been sent.
@@ -16,15 +19,13 @@ onmessage = function (event) {
     // Prepare a player object that will calculate the next move and tell us about its progress.
     var computerPlayer = new ComputerPlayer();
     computerPlayer.calculationProgress$.subscribe((progressPercentage: any) => {
-    console.log("got progress" + progressPercentage);
-    thisSelf.postMessage("PROGRESS:" + progressPercentage);
+        thisSelf.postMessage("PROGRESS:" + progressPercentage);
     });
 
     var selectedMove = computerPlayer.getBestMove(board);
 
     // Send our selected move back to the main thread.
-    console.log("got computer move");
-    console.log(selectedMove);
     /* eslint-disable-next-line no-restricted-globals */
+    console.log(`move made by worker ${id}`);
     thisSelf.postMessage(selectedMove);
 }
