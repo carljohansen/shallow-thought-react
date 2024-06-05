@@ -26,52 +26,59 @@ function App() {
 
   function createPlayerForNextMove(playersBoard: Chess.Board): ISingleMovePlayer {
 
-    const singleMovePlayer = PlayerFactory.createArtificalPlayerForSingleMove(playersBoard,
-      (e: MoveEvent) => {
-        const move = e.detail;
-        console.log(`Move made: ${move.fromSquare.algebraicNotation} to ${move.toSquare.algebraicNotation}`);
-        setNewMove(e.detail);
+    const handleMoveMade = (e: MoveEvent) => {
+      const move = e.detail;
+      console.log(`Move made: ${move.fromSquare.algebraicNotation} to ${move.toSquare.algebraicNotation}`);
+      setNewMove(e.detail);
 
-        if (!move) {
-          alert("Game over!");
-          return null;
-        }
-
-        let validatedMove = playersBoard.isLegalMove(move);
-        if (!validatedMove) {
-          alert("That move is not legal..");
-          // TODO: fix this
-          //this.activePlayer.deactivate();
-          //this.activePlayer.activate(this.board);
-          return null;
-        }
-
-        // Annotate the move with disambiguation information (this improves our move list display).
-        validatedMove.disambiguationSquare = playersBoard.getMoveDisambiguationSquare(validatedMove);
-
-        const newBoard = playersBoard.applyMove(validatedMove);
-        setBoard(newBoard);
-
-        validatedMove.checkHint = playersBoard.getCheckState();
-        //this.moveHistory.push(validatedMove);
-
-        singleMovePlayer.dispose();
-
-        setPlayerForNextMove(newBoard);
-      },
-
-      (e: ProgressUpdatedEvent) => {
-        //console.log("progress: " + e.detail);
+      if (!move) {
+        alert("Game over!");
+        return null;
       }
-    );
 
+      let validatedMove = playersBoard.isLegalMove(move);
+      if (!validatedMove) {
+        alert("That move is not legal..");
+        // TODO: fix this
+        //this.activePlayer.deactivate();
+        //this.activePlayer.activate(this.board);
+        return null;
+      }
+
+      // Annotate the move with disambiguation information (this improves our move list display).
+      validatedMove.disambiguationSquare = playersBoard.getMoveDisambiguationSquare(validatedMove);
+
+      const newBoard = playersBoard.applyMove(validatedMove);
+      setBoard(newBoard);
+
+      validatedMove.checkHint = playersBoard.getCheckState();
+      //this.moveHistory.push(validatedMove);
+
+      singleMovePlayer.dispose();
+
+      setPlayerForNextMove(newBoard);
+    };
+
+    let singleMovePlayer: ISingleMovePlayer;
+
+    if (playersBoard.isWhiteToMove) {
+      singleMovePlayer = PlayerFactory.createHumanPlayerForSingleMove(playersBoard,
+        handleMoveMade
+      );
+    } else {
+      singleMovePlayer = PlayerFactory.createArtificalPlayerForSingleMove(playersBoard,
+        handleMoveMade,
+
+        (e: ProgressUpdatedEvent) => {
+          //console.log("progress: " + e.detail);
+        }
+      );
+    }
     return singleMovePlayer;
   }
 
   const onHumanMoveSelected = (event: MoveSelectedEvent) => {
-    // const newBoard = gameBoard.applyMove(event.detail);
-    // setGameBoard(newBoard);
-    // setNewMove(event.detail);
+    player.handleMoveSelection(event);
   }
 
   function setPlayerForFirstMove() {
