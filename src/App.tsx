@@ -5,12 +5,13 @@ import './app/ui/css/game.component.css';
 import './app/ui/css/movelist.component.css';
 import './app/ui/css/piece.component.css';
 import Game, { MoveSelectedEvent } from './Game';
-import { GameSession } from './app/players/GameSession';
-import { ISingleMovePlayer, MoveEvent, PlayerFactory, ProgressUpdatedEvent } from './app/players/PlayerBase';
+import { ISingleMovePlayer, MoveEvent, ProgressUpdatedEvent } from './app/players/PlayerInterface';
+import { GameHelper } from './app/engine/GameHelper';
+import { PlayerFactory } from './app/players/PlayerFactory';
 
 Chess.BoardResources.init();
 
-const initialBoard = GameSession.createStandardBoard();
+const initialBoard = GameHelper.createStandardBoard();
 
 function App() {
 

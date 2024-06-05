@@ -1,28 +1,38 @@
 import * as Chess from '../engine/ChessElements';
-import { PlayerBase } from './PlayerBase';
+import { ISingleMovePlayer, MoveEvent, ProgressUpdatedEvent } from './PlayerInterface';
 
-export class ArtificialPlayer extends PlayerBase {
+export class ArtificialSingleMovePlayer implements ISingleMovePlayer {
 
     private engineWorker: Worker;
     private playedMove: Chess.GameMove;
+    private board: Chess.Board;
+    private handleMove: (e: MoveEvent) => void;
+    private handleProgress: (e: ProgressUpdatedEvent) => void;
 
-    constructor(colour: Chess.Player) {
-        //super(colour);
-        super();
+    constructor(board: Chess.Board,
+        handleMove: (e: MoveEvent) => void,
+        handleProgress: (e: ProgressUpdatedEvent) => void) {
+
         this.engineWorker = undefined;
+        this.board = board;
+        this.handleMove = handleMove;
+        this.handleProgress = handleProgress;
     }
 
-    activate(board: Chess.Board): void {
+    // Computer player does not care what the user clicks.
+    handleMoveSelection: (e: MoveEvent) => void;
+
+    activate(): void {
 
         if (!this.engineWorker) {
             this.engineWorker = new Worker(new URL('../../artificialPlayerDispatch.ts', import.meta.url));
             this.engineWorker.onmessage = this.onMoveDecision;
         }
-        this.progress$.next(0);
-        this.engineWorker.postMessage(board);
+        this.handleProgress(new CustomEvent("progress", { detail: 0 }));
+        this.engineWorker.postMessage(this.board);
     }
 
-    public onMoveDecision = (e: MessageEvent) => {
+    private onMoveDecision = (e: MessageEvent) => {
 
         var matchProgress = (data: any) => {
             const myRegexp = /PROGRESS:(.+)/g;
@@ -32,23 +42,19 @@ export class ArtificialPlayer extends PlayerBase {
 
         let progress: number;
         if ((progress = matchProgress(e.data)) !== null) {
-            this.progress$.next(progress);
+            this.handleProgress(new CustomEvent("progress", { detail: progress }));
             return;
         }
 
         const chosenMoveAsObj = e.data;
         if (!chosenMoveAsObj) {
             // We are unable to move.  It's either mate or stalemate.
-            this.move$.next(null);
+            this.handleMove(new CustomEvent("UnableToMove", { detail: null }));
         } else {
             this.playedMove = Chess.GameMove.deserialize(e.data);
-            this.move$.next(this.playedMove);
+            this.handleMove(new CustomEvent("moveMade", { detail: this.playedMove }));
         }
     };
-
-    public deactivate(): void {
-        this.playedMove = null;
-    }
 
     public dispose(): void {
         if (this.engineWorker) {
