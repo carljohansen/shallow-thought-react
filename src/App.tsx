@@ -5,6 +5,7 @@ import './app/ui/css/game.component.css';
 import './app/ui/css/movelist.component.css';
 import './app/ui/css/piece.component.css';
 import Game, { MoveSelectedEvent } from './Game';
+import MoveList from './MoveList';
 import { ISingleMovePlayer, MoveEvent, ProgressUpdatedEvent } from './app/players/PlayerInterface';
 import { GameHelper } from './app/engine/GameHelper';
 import { PlayerFactory } from './app/players/PlayerFactory';
@@ -16,6 +17,7 @@ const initialBoard = GameHelper.createStandardBoard();
 function App() {
 
   const [newMove, setNewMove] = useState<Chess.GameMove>(null);
+  const [moveList, setMoveList] = useState<Chess.GameMove[]>([]);
   const [board, setBoard] = useState<Chess.Board>(initialBoard);
   const [player, setPlayer] = useState<ISingleMovePlayer>(null);
 
@@ -51,7 +53,7 @@ function App() {
 
       const newBoard = playersBoard.applyMove(validatedMove);
       setBoard(newBoard);
-
+      setMoveList(curr => [...curr, validatedMove])
       validatedMove.checkHint = playersBoard.getCheckState();
       //this.moveHistory.push(validatedMove);
 
@@ -90,11 +92,20 @@ function App() {
     setPlayer(createPlayerForNextMove(newBoard));
   }
 
+  if (board
+    && board.moveCount === 0
+    && !player) {
+    setPlayerForFirstMove();
+  }
+
   return (
     <div className="App">
       <header className="App-header">
         <div style={{ position: "absolute", top: "0px", left: "0px", height: "80px" }}>
           <button title="Start Game" onClick={setPlayerForFirstMove}>Start Game</button>
+        </div>
+        <div style={{ position: "absolute", top: "50px", left: "0px", height: "80px" }}>
+          <MoveList moveList={moveList}></MoveList>
         </div>
         <Game gameBoard={board} newMove={newMove} handleMoveInput={onHumanMoveSelected} />
       </header>
