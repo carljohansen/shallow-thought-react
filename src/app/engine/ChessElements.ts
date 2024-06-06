@@ -5,7 +5,7 @@ export class BoardSquare {
     private squareIndex: number;
     private algebName: string;
 
-    constructor(public file: number, public rank: number) {
+    constructor(public readonly file: number, public readonly rank: number) {
         this.squareIndex = ((this.rank - 1) * 8) + (this.file - 1);
         this.algebName = String.fromCharCode(96 + this.file) + this.rank;
     }
@@ -111,6 +111,11 @@ export class BoardResources {
 export enum Player {
     White = 0,
     Black = 1
+}
+
+export enum PlayerType {
+    Human = 0,
+    Engine = 1
 }
 
 export interface ColouredPiece {

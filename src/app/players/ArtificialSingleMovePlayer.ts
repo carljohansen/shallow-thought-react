@@ -5,13 +5,10 @@ export class ArtificialSingleMovePlayer implements ISingleMovePlayer {
 
     private engineWorker: Worker;
     private playedMove: Chess.GameMove;
-    private board: Chess.Board;
-    private handleMove: (e: MoveEvent) => void;
-    private handleProgress: (e: ProgressUpdatedEvent) => void;
 
-    constructor(board: Chess.Board,
-        handleMove: (e: MoveEvent) => void,
-        handleProgress: (e: ProgressUpdatedEvent) => void) {
+    constructor(public readonly board: Chess.Board,
+        public readonly handleMove: (e: MoveEvent) => void,
+        public readonly handleProgress: (e: ProgressUpdatedEvent) => void) {
 
         this.engineWorker = undefined;
         this.board = board;
@@ -20,7 +17,7 @@ export class ArtificialSingleMovePlayer implements ISingleMovePlayer {
     }
 
     // Computer player does not care what the user clicks.
-    handleMoveSelection: (e: MoveEvent) => void;
+    handleMoveSelection = (e: MoveEvent) => { }
 
     activate(): void {
 

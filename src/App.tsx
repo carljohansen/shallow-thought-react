@@ -6,14 +6,16 @@ import './app/ui/css/movelist.component.css';
 import './app/ui/css/piece.component.css';
 import Game, { MoveSelectedEvent } from './Game';
 import MoveList from './MoveList';
-import { ISingleMovePlayer, MoveEvent, ProgressUpdatedEvent } from './app/players/PlayerInterface';
-import { GameHelper } from './app/engine/GameHelper';
-import { PlayerFactory } from './app/players/PlayerFactory';
 import MoveProgressBar from './MoveProgressBar';
+import { ISingleMovePlayer, MoveEvent, ProgressUpdatedEvent } from './app/players/PlayerInterface';
+import { GamePairing } from './app/players/GamePairing';
+import { GameHelper } from './app/engine/GameHelper';
 
 Chess.BoardResources.init();
 
 const initialBoard = GameHelper.createStandardBoard();
+//const pairing = new GamePairing(Chess.PlayerType.Human, Chess.PlayerType.Human);
+const pairing = new GamePairing(Chess.PlayerType.Engine, Chess.PlayerType.Engine);
 
 function App() {
 
@@ -31,7 +33,11 @@ function App() {
 
   function createPlayerForNextMove(playersBoard: Chess.Board): ISingleMovePlayer {
 
+    let currPlayer: ISingleMovePlayer;
+
     const handleMoveMade = (e: MoveEvent) => {
+
+      currPlayer.dispose();
 
       const move = e.detail;
       setNewMove(move);
@@ -51,23 +57,14 @@ function App() {
       setMoveList(curr => [...curr, move])
       //this.moveHistory.push(validatedMove);
 
-      singleMovePlayer.dispose();
-
       setPlayerForNextMove(newBoard);
+      return currPlayer;
     };
 
-    let singleMovePlayer: ISingleMovePlayer;
-
-    if (playersBoard.isWhiteToMove) {
-      singleMovePlayer = PlayerFactory.createHumanPlayerForSingleMove(playersBoard,
-        handleMoveMade,
-        handleProgressUpdate);
-    } else {
-      singleMovePlayer = PlayerFactory.createArtificalPlayerForSingleMove(playersBoard,
-        handleMoveMade,
-        handleProgressUpdate);
-    }
-    return singleMovePlayer;
+    currPlayer = pairing.createPlayerForNextMove(playersBoard,
+      handleMoveMade,
+      handleProgressUpdate);
+    return currPlayer;
   }
 
   function handleProgressUpdate(e: ProgressUpdatedEvent) {

@@ -25,18 +25,20 @@ const MoveList: FC<MoveListProps> = ({ moveList }) => {
     }
 
     return (
-        <table>
-            <thead>
-                <tr>
-                    <td>Move</td>
-                    <td>White</td>
-                    <td>Black</td>
-                </tr>
-            </thead>
-            <tbody>
-                {rows}
-            </tbody>
-        </table>
+        <div className='movelist-wrapper'>
+            <table>
+                <thead>
+                    <tr>
+                        <td>Move</td>
+                        <td>White</td>
+                        <td>Black</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {rows}
+                </tbody>
+            </table>
+        </div>
     )
 }
 
