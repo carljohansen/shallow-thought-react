@@ -41,7 +41,7 @@ const MoveList: FC<MoveListProps> = ({ moveList }) => {
     }
 
     function moveToPgn(move: string) {
-        return move.replace("\u00D7", "x");
+        return move.replace("\u00D7", "x").replace("/", "");
     }
 
     return (
