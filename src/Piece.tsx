@@ -38,8 +38,8 @@ const Piece: FC<PieceProps> = ({ occupiedSquare, animatingMove }) => {
     }
 
     const imageName = `/img/${imagePieceName}${occupiedSquare.piece.player === Chess.Player.White ? 'l' : 'd'}.png`;
-    const leftPx = (occupiedSquare.square.file - 1) * 60;
-    const topPx = (8 - occupiedSquare.square.rank) * 60;
+    const leftPx = (occupiedSquare.square.screenFile - 1) * 60;
+    const topPx = (8 - occupiedSquare.square.screenRank) * 60;
     const initialPos = { left: `${leftPx}px`, top: `${topPx}px` };
 
     if (isInPrimaryAnimation) {

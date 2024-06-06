@@ -1,13 +1,23 @@
-﻿import MoveGenerator from './MoveGenerator';
+﻿import * as Chess from './ChessElements';
+import MoveGenerator from './MoveGenerator';
 
 export class BoardSquare {
 
     private squareIndex: number;
     private algebName: string;
+    public readonly screenRank: number;
+    public readonly screenFile: number;
 
-    constructor(public readonly file: number, public readonly rank: number) {
+    constructor(public readonly file: number, public readonly rank: number, orientation: Chess.Player = Chess.Player.White) {
         this.squareIndex = ((this.rank - 1) * 8) + (this.file - 1);
         this.algebName = String.fromCharCode(96 + this.file) + this.rank;
+        if (orientation === Chess.Player.White) {
+            this.screenFile = file;
+            this.screenRank = rank;
+        } else {
+            this.screenFile = 9 - file;
+            this.screenRank = 9 - rank;
+        }
     }
 
     public get algebraicNotation(): string {
@@ -48,6 +58,7 @@ export enum CastlingPotential {
 export class BoardResources {
 
     public static squares: BoardSquare[];
+    public static flippedSquares: BoardSquare[];
     public static pieces: ColouredPiece[];
     public static squaresGrid: BoardSquare[][];
     public static squaresGridUiLayout: BoardSquare[][];
@@ -59,6 +70,7 @@ export class BoardResources {
         }
 
         BoardResources.squares = [];
+        BoardResources.flippedSquares = [];
         BoardResources.squaresGrid = [];
         BoardResources.squaresGridUiLayout = [];
         BoardResources.pieces = [];
@@ -68,7 +80,8 @@ export class BoardResources {
             BoardResources.squaresGridUiLayout[8 - rank] = [];
             for (let file = 1; file <= 8; file++) {
                 const newSquare = new BoardSquare(file, rank);
-                BoardResources.squares[squareIndex++] = newSquare;
+                BoardResources.squares[squareIndex] = newSquare;
+                BoardResources.flippedSquares[squareIndex++] = new BoardSquare(file, rank, Chess.Player.Black);
                 if (rank === 1) {
                     BoardResources.squaresGrid[file] = [];
                 }
@@ -258,10 +271,13 @@ export class Board {
         return BoardResources.pieces[pieceCode];
     }
 
-    public forEachOccupiedSquare(fn: (s: OccupiedSquare) => void) {
+    public forEachOccupiedSquare(fn: (s: OccupiedSquare) => void, orientation: Chess.Player = Chess.Player.White) {
         this.squares.forEach((pieceId: number, squareId: number) => {
             if (pieceId) {
-                fn({ square: BoardResources.squares[squareId], piece: BoardResources.pieces[pieceId] });
+                fn({
+                    square: orientation === Chess.Player.White ? BoardResources.squares[squareId] : BoardResources.flippedSquares[squareId],
+                    piece: BoardResources.pieces[pieceId]
+                });
             }
         });
     }

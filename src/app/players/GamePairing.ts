@@ -22,4 +22,12 @@ export default class GamePairing {
                 handleProgressUpdate);
         }
     }
+
+    public getPreferredOrientation(): Chess.Player {
+        if (this.whitePlayerType === Chess.PlayerType.Engine
+            && this.blackPlayerType === Chess.PlayerType.Human) {
+            return Chess.Player.Black;
+        }
+        return Chess.Player.White;
+    }
 }

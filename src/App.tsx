@@ -93,6 +93,8 @@ function App() {
     setPlayerForFirstMove();
   }
 
+  let boardOrientation: Chess.Player = pairing?.getPreferredOrientation();
+
   function handlePairingSelected(e: PairingSelectedEvent) {
     setPairing(e.detail);
   }
@@ -111,7 +113,7 @@ function App() {
             <PairingSelector
               handlePairingSelected={handlePairingSelected} />
           </div>) :
-          (<Game gameBoard={board} newMove={newMove} handleMoveInput={onHumanMoveSelected} />)
+          (<Game gameBoard={board} newMove={newMove} handleMoveInput={onHumanMoveSelected} orientation={boardOrientation} />)
         }
       </header>
     </div>

@@ -10,11 +10,12 @@ export interface MoveSelectedEvent extends CustomEvent<GameMove> { }
 
 interface GameProps {
     gameBoard: Chess.Board,
+    orientation: Chess.Player,
     newMove?: Chess.GameMove,
     handleMoveInput: (e: MoveSelectedEvent) => void
 }
 
-const Game: FC<GameProps> = ({ gameBoard, handleMoveInput, newMove = null }) => {
+const Game: FC<GameProps> = ({ gameBoard, orientation, handleMoveInput, newMove = null }) => {
 
     const [selectedFromSquare, setSelectedFromSquare] = useState<BoardSquare>(null);
 
@@ -47,12 +48,14 @@ const Game: FC<GameProps> = ({ gameBoard, handleMoveInput, newMove = null }) => 
     const squareDivs: JSX.Element[] = [];
     for (var row = 0; row < 8; row++) {
         for (var col = 0; col < 8; col++) {
-            const squareName = `${String.fromCharCode(97 + col)}${String(8 - row)}`
+            const file = (orientation === Chess.Player.White ? col + 1 : 8 - col);
+            const rank = (orientation === Chess.Player.White ? 8 - row : row + 1);
+            const squareName = `${String.fromCharCode(96 + file)}${String(rank)}`
             const isSquareSelected = squareName === selectedFromSquare?.algebraicNotation;
             squareDivs.push(
                 (<Square key={row * 8 + col}
                     isLight={(row % 2) === (col % 2)}
-                    boardSquare={new BoardSquare(col + 1, 8 - row)}
+                    boardSquare={new BoardSquare(file, rank, orientation)}
                     isHighlighed={isSquareSelected}
                     handleClick={onSquareSelected} />)
             )
@@ -62,7 +65,7 @@ const Game: FC<GameProps> = ({ gameBoard, handleMoveInput, newMove = null }) => 
     const pieceElements: JSX.Element[] = [];
     gameBoard.forEachOccupiedSquare(os => pieceElements.push(
         <Piece key={os.square.index} occupiedSquare={os} />
-    ));
+    ), orientation);
 
     return (
         <div className="boardgrid">
