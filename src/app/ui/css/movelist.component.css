@@ -1,10 +1,18 @@
-.movelist-wrapper {
-    border: 1px solid black;
+.movelist-outer {
     position: absolute;
     left: 600px;
     top: 50px;
+}
+
+.movelist-wrapper {
+    border: 1px solid black;
     height: 400px;
     overflow-y: auto;
+    scroll-snap-type: y proximity;
+}
+
+.movelist-wrapper>table {
+    scroll-snap-align: end;
 }
 
 table {
