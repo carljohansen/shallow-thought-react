@@ -1,0 +1,28 @@
+/* .pairing-selector-wrapper label {
+    margin-right: 20px;
+    text-align: right;
+}
+
+.pairing-selector-wrapper {
+    display: table-cell;
+    vertical-align: middle;
+} */
+
+div.pairing-selector-wrapper .dropdowns {
+    display: grid;
+    grid-template-columns: max-content max-content;
+    grid-gap: 5px;
+}
+
+div.pairing-selector-wrapper .dropdowns label {
+    text-align: right;
+    margin-right: 10px;
+}
+
+div.pairing-selector-wrapper .dropdowns label:after {
+    content: ":";
+}
+
+div.pairing-selector-wrapper button {
+    margin-top: 10px
+}

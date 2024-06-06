@@ -28,16 +28,20 @@ const PairingSelector: FC<PairingSelectorProps> = ({ handlePairingSelected }) =>
     };
 
     return (
-        <div>
-            <label>White:</label><select onChange={handleWhiteChange}>
-                <option value="human">Human</option>
-                <option value="engine">Computer</option>
-            </select>
-            <label>Black:</label><select onChange={handleBlackChange}>
-                <option value="human">Human</option>
-                <option value="engine">Computer</option>
-            </select>
-            <button onClick={handleStartGame}>Start Game</button>
+        <div className="pairing-selector-wrapper">
+            <div className="dropdowns">
+                <label>White</label><select onChange={handleWhiteChange}>
+                    <option value="human">Human</option>
+                    <option value="engine">Computer</option>
+                </select>
+                <label>Black</label><select onChange={handleBlackChange}>
+                    <option value="human">Human</option>
+                    <option value="engine">Computer</option>
+                </select>
+            </div>
+            <div>
+                <button onClick={handleStartGame}>Start Game</button>
+            </div>
         </div>
     )
 }

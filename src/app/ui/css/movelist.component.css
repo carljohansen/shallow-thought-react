@@ -1,9 +1,20 @@
+.movelist-wrapper {
+    border: 1px solid slategray;
+    width: 250px;
+    /* Set your desired width */
+    height: 500px;
+    /* Set your desired height */
+    overflow: auto;
+    /* Enable scrolling */
+}
+
 table {
     width: 250px;
     border: none;
 }
 
-th, td {
+th,
+td {
     padding: 5px;
     text-align: left;
 }

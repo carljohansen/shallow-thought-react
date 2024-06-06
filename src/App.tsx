@@ -2,6 +2,7 @@ import * as Chess from './app/engine/ChessElements'
 import { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import './app/ui/css/game.component.css';
+import './app/ui/css/pairingselector.component.css';
 import './app/ui/css/movelist.component.css';
 import './app/ui/css/piece.component.css';
 import Game, { MoveSelectedEvent } from './Game';
