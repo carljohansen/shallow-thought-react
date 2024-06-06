@@ -8,17 +8,18 @@ import Game, { MoveSelectedEvent } from './Game';
 import MoveList from './MoveList';
 import MoveProgressBar from './MoveProgressBar';
 import { ISingleMovePlayer, MoveEvent, ProgressUpdatedEvent } from './app/players/PlayerInterface';
-import { GamePairing } from './app/players/GamePairing';
+import GamePairing from './app/players/GamePairing';
 import { GameHelper } from './app/engine/GameHelper';
+import PairingSelector, { PairingSelectedEvent } from './PairingSelector';
 
 Chess.BoardResources.init();
 
 const initialBoard = GameHelper.createStandardBoard();
 //const pairing = new GamePairing(Chess.PlayerType.Human, Chess.PlayerType.Human);
-const pairing = new GamePairing(Chess.PlayerType.Engine, Chess.PlayerType.Engine);
 
 function App() {
 
+  const [pairing, setPairing] = useState<GamePairing>(null);
   const [newMove, setNewMove] = useState<Chess.GameMove>(null);
   const [evaluationProgress, setEvaluationProgress] = useState<number>(0);
   const [moveList, setMoveList] = useState<Chess.GameMove[]>([]);
@@ -76,6 +77,9 @@ function App() {
   }
 
   function setPlayerForFirstMove() {
+    if (pairing === null) {
+      return
+    }
     setPlayerForNextMove(board);
   }
 
@@ -89,6 +93,10 @@ function App() {
     setPlayerForFirstMove();
   }
 
+  function handlePairingSelected(e: PairingSelectedEvent) {
+    setPairing(e.detail);
+  }
+
   return (
     <div className="App">
       <header className="App-header">
@@ -98,7 +106,13 @@ function App() {
         <div style={{ position: "absolute", top: "50px", left: "0px", height: "80px" }}>
           <MoveList moveList={moveList}></MoveList>
         </div>
-        <Game gameBoard={board} newMove={newMove} handleMoveInput={onHumanMoveSelected} />
+        {pairing === null ?
+          (<div style={{ position: "absolute", top: "10px", left: "400px" }}>
+            <PairingSelector
+              handlePairingSelected={handlePairingSelected} />
+          </div>) :
+          (<Game gameBoard={board} newMove={newMove} handleMoveInput={onHumanMoveSelected} />)
+        }
       </header>
     </div>
   );

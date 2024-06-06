@@ -2,8 +2,7 @@ import * as Chess from '../engine/ChessElements';
 import { PlayerFactory } from './PlayerFactory';
 import { MoveEvent, ProgressUpdatedEvent, ISingleMovePlayer } from './PlayerInterface';
 
-
-export class GamePairing {
+export default class GamePairing {
 
     constructor(public readonly whitePlayerType: Chess.PlayerType,
         public readonly blackPlayerType: Chess.PlayerType) { }
