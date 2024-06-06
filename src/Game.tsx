@@ -1,4 +1,5 @@
 import * as Chess from './app/engine/ChessElements'
+import './app/ui/css/game.component.css';
 import React, { FC, useState } from 'react';
 import Square from './Square';
 import { BoardSquare, GameMove } from './app/engine/ChessElements';

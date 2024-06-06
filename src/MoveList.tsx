@@ -1,5 +1,6 @@
-import { FC } from 'react'
 import * as Chess from './app/engine/ChessElements'
+import './app/ui/css/movelist.component.css';
+import { FC } from 'react'
 
 interface MoveListProps {
     moveList: Chess.GameMove[]

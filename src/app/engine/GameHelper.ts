@@ -1,6 +1,6 @@
 import * as Chess from './ChessElements';
 
-export class GameHelper {
+export default class GameHelper {
     public static createStandardBoard() {
         return Chess.Board.create([{ square: "a1", piece: Chess.PieceType.Rook },
         { square: "b1", piece: Chess.PieceType.Knight },

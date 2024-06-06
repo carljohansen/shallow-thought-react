@@ -5,6 +5,8 @@
     -ms-grid-columns: 60px 60px 60px 60px 60px 60px 60px 60px;
     -ms-grid-rows: 60px 60px 60px 60px 60px 60px 60px 60px;
     position: absolute;
+    left: 50px;
+    top: 50px;
 }
 
 .boardsquare {
@@ -25,14 +27,6 @@
 
 .darksquare {
     background-color: burlywood;
-}
-
-.movelist {
-    border: 1px solid black;
-    position: absolute;
-    left: 500px;
-    height: 400px;
-    overflow-y: auto;
 }
 
 .toolbar {

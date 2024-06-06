@@ -1,4 +1,5 @@
 import * as Chess from './app/engine/ChessElements'
+import './app/ui/css/pairingselector.component.css';
 import { ChangeEvent, FC, useState } from 'react';
 import GamePairing from './app/players/GamePairing';
 

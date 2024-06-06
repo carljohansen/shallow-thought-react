@@ -1,16 +1,12 @@
 import * as Chess from './app/engine/ChessElements'
 import { useCallback, useEffect, useState } from 'react';
 import './App.css';
-import './app/ui/css/game.component.css';
-import './app/ui/css/pairingselector.component.css';
-import './app/ui/css/movelist.component.css';
-import './app/ui/css/piece.component.css';
 import Game, { MoveSelectedEvent } from './Game';
 import MoveList from './MoveList';
 import MoveProgressBar from './MoveProgressBar';
 import { ISingleMovePlayer, MoveEvent } from './app/players/PlayerInterface';
 import GamePairing from './app/players/GamePairing';
-import { GameHelper } from './app/engine/GameHelper';
+import GameHelper from './app/engine/GameHelper';
 import PairingSelector, { PairingSelectedEvent } from './PairingSelector';
 
 Chess.BoardResources.init();
@@ -99,14 +95,12 @@ function App() {
         <div style={{ position: "absolute", top: "0px", left: "0px", height: "80px" }}>
           <MoveProgressBar player={player}></MoveProgressBar>
         </div>
-        <div style={{ position: "absolute", top: "50px", left: "0px", height: "80px" }}>
-          <MoveList moveList={moveList}></MoveList>
-        </div>
+        <MoveList moveList={moveList}></MoveList>
         {pairing === null ?
-          (<div style={{ position: "absolute", top: "10px", left: "400px" }}>
+          (
             <PairingSelector
               handlePairingSelected={handlePairingSelected} />
-          </div>) :
+          ) :
           (<Game gameBoard={board} newMove={newMove} handleMoveInput={onHumanMoveSelected} orientation={boardOrientation} />)
         }
       </header>

@@ -1,6 +1,7 @@
+import * as Chess from './app/engine/ChessElements';
+import './app/ui/css/piece.component.css';
 import React, { FC } from 'react';
 import { motion } from "framer-motion";
-import * as Chess from './app/engine/ChessElements';
 
 interface PieceProps {
     occupiedSquare: Chess.OccupiedSquare,

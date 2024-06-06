@@ -1,16 +1,19 @@
 .movelist-wrapper {
-    border: 1px solid slategray;
-    width: 250px;
-    /* Set your desired width */
-    height: 500px;
-    /* Set your desired height */
-    overflow: auto;
-    /* Enable scrolling */
+    border: 1px solid black;
+    position: absolute;
+    left: 600px;
+    top: 50px;
+    height: 400px;
+    overflow-y: auto;
 }
 
 table {
     width: 250px;
     border: none;
+}
+
+thead {
+    font-weight: bold;
 }
 
 th,
