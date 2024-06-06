@@ -9,6 +9,8 @@ export interface ISingleMovePlayer {
 
     // Handles the human user's selection of a move.
     handleMoveSelection: (e: MoveEvent) => void;
+
+    useProgressHandler: (handleProgress: (e: ProgressUpdatedEvent) => void) => void;
 }
 
 export interface MoveEvent extends CustomEvent<Chess.GameMove> { }
@@ -22,4 +24,5 @@ export class NullPlayer implements ISingleMovePlayer {
     dispose(): void {
     }
     handleMoveSelection: (e: MoveEvent) => void;
+    useProgressHandler: (handleProgress: (e: ProgressUpdatedEvent) => void) => void;
 }

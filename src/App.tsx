@@ -1,5 +1,5 @@
 import * as Chess from './app/engine/ChessElements'
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import './app/ui/css/game.component.css';
 import './app/ui/css/movelist.component.css';
@@ -7,7 +7,7 @@ import './app/ui/css/piece.component.css';
 import Game, { MoveSelectedEvent } from './Game';
 import MoveList from './MoveList';
 import MoveProgressBar from './MoveProgressBar';
-import { ISingleMovePlayer, MoveEvent, ProgressUpdatedEvent } from './app/players/PlayerInterface';
+import { ISingleMovePlayer, MoveEvent } from './app/players/PlayerInterface';
 import GamePairing from './app/players/GamePairing';
 import { GameHelper } from './app/engine/GameHelper';
 import PairingSelector, { PairingSelectedEvent } from './PairingSelector';
@@ -15,13 +15,11 @@ import PairingSelector, { PairingSelectedEvent } from './PairingSelector';
 Chess.BoardResources.init();
 
 const initialBoard = GameHelper.createStandardBoard();
-//const pairing = new GamePairing(Chess.PlayerType.Human, Chess.PlayerType.Human);
 
 function App() {
 
   const [pairing, setPairing] = useState<GamePairing>(null);
   const [newMove, setNewMove] = useState<Chess.GameMove>(null);
-  const [evaluationProgress, setEvaluationProgress] = useState<number>(0);
   const [moveList, setMoveList] = useState<Chess.GameMove[]>([]);
   const [board, setBoard] = useState<Chess.Board>(initialBoard);
   const [player, setPlayer] = useState<ISingleMovePlayer>(null);
@@ -63,18 +61,13 @@ function App() {
     };
 
     currPlayer = pairing.createPlayerForNextMove(playersBoard,
-      handleMoveMade,
-      handleProgressUpdate);
+      handleMoveMade);
     return currPlayer;
   }
 
-  function handleProgressUpdate(e: ProgressUpdatedEvent) {
-    setEvaluationProgress(e.detail);
-  }
-
-  const onHumanMoveSelected = (event: MoveSelectedEvent) => {
+  const onHumanMoveSelected = useCallback((event: MoveSelectedEvent) => {
     player.handleMoveSelection(event);
-  }
+  }, [player]);
 
   function setPlayerForFirstMove() {
     if (pairing === null) {
@@ -103,7 +96,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <div style={{ position: "absolute", top: "0px", left: "0px", height: "80px" }}>
-          <MoveProgressBar progress={evaluationProgress}></MoveProgressBar>
+          <MoveProgressBar player={player}></MoveProgressBar>
         </div>
         <div style={{ position: "absolute", top: "50px", left: "0px", height: "80px" }}>
           <MoveList moveList={moveList}></MoveList>

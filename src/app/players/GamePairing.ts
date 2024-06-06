@@ -1,6 +1,6 @@
 import * as Chess from '../engine/ChessElements';
 import { PlayerFactory } from './PlayerFactory';
-import { MoveEvent, ProgressUpdatedEvent, ISingleMovePlayer } from './PlayerInterface';
+import { MoveEvent, ISingleMovePlayer } from './PlayerInterface';
 
 export default class GamePairing {
 
@@ -8,18 +8,15 @@ export default class GamePairing {
         public readonly blackPlayerType: Chess.PlayerType) { }
 
     public createPlayerForNextMove(board: Chess.Board,
-        handleMoveMade: (e: MoveEvent) => void,
-        handleProgressUpdate: (e: ProgressUpdatedEvent) => void): ISingleMovePlayer {
+        handleMoveMade: (e: MoveEvent) => void): ISingleMovePlayer {
 
         const playerType = board.isWhiteToMove ? this.whitePlayerType : this.blackPlayerType;
         if (playerType === Chess.PlayerType.Human) {
             return PlayerFactory.createHumanPlayerForSingleMove(board,
-                handleMoveMade,
-                handleProgressUpdate);
+                handleMoveMade);
         } else {
             return PlayerFactory.createArtificalPlayerForSingleMove(board,
-                handleMoveMade,
-                handleProgressUpdate);
+                handleMoveMade);
         }
     }
 

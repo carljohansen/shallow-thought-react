@@ -5,14 +5,15 @@ export class ArtificialSingleMovePlayer implements ISingleMovePlayer {
 
     private engineWorker: Worker;
     private playedMove: Chess.GameMove;
+    private handleProgress: (e: ProgressUpdatedEvent) => void;
 
     constructor(public readonly board: Chess.Board,
-        public readonly handleMove: (e: MoveEvent) => void,
-        public readonly handleProgress: (e: ProgressUpdatedEvent) => void) {
+        public readonly handleMove: (e: MoveEvent) => void) {
 
         this.engineWorker = undefined;
-        this.board = board;
-        this.handleMove = handleMove;
+    }
+
+    useProgressHandler(handleProgress: (e: ProgressUpdatedEvent) => void) {
         this.handleProgress = handleProgress;
     }
 
