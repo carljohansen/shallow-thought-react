@@ -11,8 +11,11 @@ interface PairingSelectorProps {
 
 const PairingSelector: FC<PairingSelectorProps> = ({ handlePairingSelected }) => {
 
+    const standardGameFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
     const [whiteSelection, setWhiteSelection] = useState(Chess.PlayerType.Human);
     const [blackSelection, setBlackSelection] = useState(Chess.PlayerType.Human);
+    const [setupFen, setSetupFen] = useState(standardGameFen);
 
     const eventToPlayerType = (e: ChangeEvent<HTMLSelectElement>) => e.target.value === "human" ? Chess.PlayerType.Human : Chess.PlayerType.Engine;
 
@@ -24,8 +27,12 @@ const PairingSelector: FC<PairingSelectorProps> = ({ handlePairingSelected }) =>
         setBlackSelection(eventToPlayerType(e));
     };
 
+    const handleFenChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+        setSetupFen(e.target.value);
+    };
+
     const handleStartGame = () => {
-        handlePairingSelected(new CustomEvent<GamePairing>("gameStart", { detail: new GamePairing(whiteSelection, blackSelection) }));
+        handlePairingSelected(new CustomEvent<GamePairing>("gameStart", { detail: new GamePairing(whiteSelection, blackSelection, setupFen) }));
     };
 
     return (
@@ -39,6 +46,9 @@ const PairingSelector: FC<PairingSelectorProps> = ({ handlePairingSelected }) =>
                     <option value="human">Human</option>
                     <option value="engine">Computer</option>
                 </select>
+            </div>
+            <div>
+                <textarea rows={8} cols={40} onChange={handleFenChange} value={setupFen} />
             </div>
             <div>
                 <button onClick={handleStartGame}>Start Game</button>

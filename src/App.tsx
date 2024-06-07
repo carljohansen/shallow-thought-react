@@ -11,14 +11,12 @@ import PairingSelector, { PairingSelectedEvent } from './PairingSelector';
 
 Chess.BoardResources.init();
 
-const initialBoard = GameHelper.createStandardBoard();
-
 function App() {
 
   const [pairing, setPairing] = useState<GamePairing>(null);
   const [newMove, setNewMove] = useState<Chess.GameMove>(null);
   const [moveList, setMoveList] = useState<Chess.GameMove[]>([]);
-  const [board, setBoard] = useState<Chess.Board>(initialBoard);
+  const [board, setBoard] = useState<Chess.Board>(null);
   const [player, setPlayer] = useState<ISingleMovePlayer>(null);
 
   useEffect(() => {
@@ -85,7 +83,10 @@ function App() {
   const boardOrientation: Chess.Player = pairing?.getPreferredOrientation();
 
   function handlePairingSelected(e: PairingSelectedEvent) {
-    setPairing(e.detail);
+    const selectedPairing = e.detail;
+    const initialBoard = GameHelper.createBoardFromFen(selectedPairing.startingPositionFen);
+    setBoard(initialBoard);
+    setPairing(selectedPairing);
   }
 
   return (

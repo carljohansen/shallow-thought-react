@@ -5,7 +5,8 @@ import { MoveEvent, ISingleMovePlayer } from './PlayerInterface';
 export default class GamePairing {
 
     constructor(public readonly whitePlayerType: Chess.PlayerType,
-        public readonly blackPlayerType: Chess.PlayerType) { }
+        public readonly blackPlayerType: Chess.PlayerType,
+        public readonly startingPositionFen: string) { }
 
     public createPlayerForNextMove(board: Chess.Board,
         handleMoveMade: (e: MoveEvent) => void): ISingleMovePlayer {
