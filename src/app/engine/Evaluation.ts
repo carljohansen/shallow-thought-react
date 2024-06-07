@@ -46,6 +46,11 @@ export class ComputerPlayer {
 
     private getBestMoveMinimax(board: Chess.Board, headStartMoves: Chess.GameMove[], depth: number, isCaptureChain: boolean, alphaScore: number): EvaluatedMove {
 
+        if (board.numPieces === 2) {
+            // nothing but kings left.
+            return { move: null, score: depth * (board.isWhiteToMove ? 1 : -1) };
+        }
+
         const movesAndReplies = this.getMovesAndReplies(board, headStartMoves);
 
         if (!movesAndReplies.some(move => !move.move.isPawnAttack)) {
@@ -57,7 +62,7 @@ export class ComputerPlayer {
         }
 
         let maxDepth = isCaptureChain ? 6 : 4;
-        // let maxDepth = 3;
+        // maxDepth = 9;
 
         let bestMoveSoFar: Chess.GameMove = null;
         let bestScoreSoFar: number = null;
@@ -149,7 +154,6 @@ class EvaluationFunction {
         const playerIndex = board.isWhiteToMove ? 0 : 1;
         const opponentIndex = 1 - playerIndex;
         const scoreScaler = [1, -1];
-        const opponentScoreScaler = board.isWhiteToMove ? -1 : 1;
 
         board.forEachOccupiedSquare(square => {
             result += EvaluationFunction.materialValues[square.piece.piece] * (square.piece.player === Chess.Player.White ? 1 : -1);

@@ -48,7 +48,7 @@ export default class MoveGenerator {
             let newRank = fromSquare.rank + direction;
             const newFile = fromSquare.file + i;
             if (Chess.BoardResources.isValidSquare(newFile, newRank)) {
-                var destSquare = board.getSquarePiece(newFile, newRank);
+                const destSquare = board.getSquarePiece(newFile, newRank);
                 let capturePiece = destSquare.piece;
                 if (!findKingCaptureOnly
                     && capturePiece === Chess.PieceType.None
@@ -92,7 +92,7 @@ export default class MoveGenerator {
             const newRank = fromSquare.rank + direction * i;
             const newFile = fromSquare.file;
             if (Chess.BoardResources.isValidSquare(newFile, newRank)) {
-                var destSquare = board.getSquarePiece(newFile, newRank);
+                const destSquare = board.getSquarePiece(newFile, newRank);
                 const blockingPiece = destSquare.piece;
                 if (blockingPiece !== Chess.PieceType.None) {
                     break;

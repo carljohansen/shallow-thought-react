@@ -239,6 +239,8 @@ export class Board {
 
     public moveCount: number;
 
+    public numPieces: number = 0;
+
     public static create(whitePieces: { square: string, piece: PieceType }[],
         blackPieces: { square: string, piece: PieceType }[],
         isWhiteToMove: boolean, castlingStatus: number) {
@@ -246,6 +248,7 @@ export class Board {
         const newBoard = new Board();
         newBoard.squares = [];
         const allPieces = [whitePieces, blackPieces];
+        newBoard.numPieces = whitePieces.length + blackPieces.length;
         for (let colour = 0; colour < 2; colour++) {
             let currPieces = allPieces[colour];
             for (let i = 0; i < currPieces.length; i++) {
@@ -361,12 +364,6 @@ export class Board {
         return hasKingCapture;
     }
 
-    public getNumPieces(): number {
-        var numPieces = 0;
-        this.forEachOccupiedSquare(s => { if (s.piece.piece !== PieceType.None) numPieces++; })
-        return numPieces;
-    }
-
     public get occupiedSquares(): OccupiedSquare[] {
         let result: OccupiedSquare[] = [];
         this.forEachOccupiedSquare(piece => result.push(piece));
@@ -403,6 +400,7 @@ export class Board {
         const movingPiece = newBoard.squares[fromIndex];
 
         newBoard.squares[fromIndex] = 0;
+        newBoard.numPieces = this.numPieces - (move.isCapture ? 1 : 0);
 
         if (move.isCapture
             && this.enPassantActiveFile
