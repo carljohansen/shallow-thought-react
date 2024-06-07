@@ -129,7 +129,7 @@ export default class GameHelper {
     private static readNextMover(boardFen: string, startPos: number): [nextMover: Chess.Player, endPos: number] {
 
         const regex = /\s*([bw])\s+/;
-        let matches = regex.exec(boardFen.substring(startPos));
+        let matches = regex.exec(boardFen.substring(startPos) + " ");
         const mainMatch = matches[1];
         const newPos = startPos + matches[0].length;
 
@@ -137,6 +137,11 @@ export default class GameHelper {
     }
 
     private static readCastlingState(boardFen: string, startPos: number): [castlingPotential: number, endPos: number] {
+
+        if (startPos >= boardFen.length) {
+            return [0, startPos];
+        }
+
         const regex = /\s*([KQkq-]+)\s+/;
         let matches = regex.exec(boardFen.substring(startPos) + " ");
         const castlingStateFen = matches[1];
@@ -160,6 +165,11 @@ export default class GameHelper {
     }
 
     private static readEnPassantState(boardFen: string, startPos: number): [enPassantFile: number, endPos: number] {
+
+        if (startPos >= boardFen.length) {
+            return [0, startPos];
+        }
+
         const regex = /\s*([a-h0-8-]+)\s+/;
         let matches = regex.exec(boardFen.substring(startPos) + " ");
         const enPassantFen = matches[1];
