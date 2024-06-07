@@ -52,7 +52,16 @@ export default class GameHelper {
         const [nextMover, moverEndPos] = this.readNextMover(boardFen, endPos);
 
         const isWhiteToMove = nextMover === Chess.Player.White;
-        return Chess.Board.create(whitePieces, blackPieces, isWhiteToMove, 0);
+
+        const [castlingState, csEndPos] = this.readCastlingState(boardFen, moverEndPos);
+        const [enPassantState] = this.readEnPassantState(boardFen, csEndPos);
+
+        const resultBoard = Chess.Board.create(whitePieces, blackPieces, isWhiteToMove, castlingState);
+        if (enPassantState > 0) {
+            resultBoard.enPassantActiveFile = enPassantState;
+        }
+
+        return resultBoard;
     }
 
     public static readPieces(boardFen: string, startPos: number, player: Chess.Player): [occupiedSquares: ISquareOccupation[], endPos: number] {
@@ -118,10 +127,48 @@ export default class GameHelper {
     }
 
     private static readNextMover(boardFen: string, startPos: number): [nextMover: Chess.Player, endPos: number] {
-        let currPos = startPos;
-        while (boardFen[currPos] === ' ') {
-            currPos++;
+
+        const regex = /\s*([bw])\s+/;
+        let matches = regex.exec(boardFen.substring(startPos));
+        const mainMatch = matches[1];
+        const newPos = startPos + matches[0].length;
+
+        return [(mainMatch === 'w' ? Chess.Player.White : Chess.Player.Black), newPos];
+    }
+
+    private static readCastlingState(boardFen: string, startPos: number): [castlingPotential: number, endPos: number] {
+        const regex = /\s*([KQkq-]+)\s+/;
+        let matches = regex.exec(boardFen.substring(startPos) + " ");
+        const castlingStateFen = matches[1];
+        const newPos = startPos + matches[0].length;
+
+        let result: number = 0;
+        if (castlingStateFen.indexOf('K') >= 0) {
+            result |= Chess.CastlingPotential.WhiteKingside;
         }
-        return [(boardFen[currPos] === 'w' ? Chess.Player.White : Chess.Player.Black), currPos];
+        if (castlingStateFen.indexOf('Q') >= 0) {
+            result |= Chess.CastlingPotential.WhiteQueenside;
+        }
+        if (castlingStateFen.indexOf('k') >= 0) {
+            result |= Chess.CastlingPotential.BlackKingside;
+        }
+        if (castlingStateFen.indexOf('q') >= 0) {
+            result |= Chess.CastlingPotential.BlackQueenside;
+        }
+
+        return [result, newPos];
+    }
+
+    private static readEnPassantState(boardFen: string, startPos: number): [enPassantFile: number, endPos: number] {
+        const regex = /\s*([a-h0-8-]+)\s+/;
+        let matches = regex.exec(boardFen.substring(startPos) + " ");
+        const enPassantFen = matches[1];
+        const newPos = startPos + matches[0].length;
+
+        const rankChar = enPassantFen.charCodeAt(0);
+        if (rankChar >= 97 && rankChar <= 104) {
+            return [(rankChar - 97) + 1, newPos];
+        }
+        return [0, newPos];
     }
 }
