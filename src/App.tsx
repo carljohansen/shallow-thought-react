@@ -87,6 +87,9 @@ function App() {
     const initialBoard = GameHelper.createBoardFromFen(selectedPairing.startingPositionFen);
     setBoard(initialBoard);
     setPairing(selectedPairing);
+    if (!initialBoard.isWhiteToMove) {
+      setMoveList([null]); // blank move for white since black starts.
+    }
   }
 
   return (

@@ -176,6 +176,9 @@ export class GameMove {
     }
 
     public static getNotation(move: GameMove): string {
+        if (!move) {
+            return ".."; // blank for when black moves first in a setup.
+        }
         let checkSymbol = "";
         if (move.checkHint === CheckState.Check) {
             checkSymbol = "+";
@@ -188,13 +191,11 @@ export class GameMove {
     private static getNotationWithoutCheck(move: GameMove): string {
 
         let disambiguationFile = "";
-        let disambiguationRank = "";
 
         let disambiguationSquare = move.disambiguationSquare || "";
 
         if (disambiguationSquare) {
             disambiguationFile = disambiguationSquare[0];
-            disambiguationRank = disambiguationSquare[1];
             const fromFile = move.fromSquare.algebraicNotation[0];
             const fromRank = move.fromSquare.algebraicNotation[1];
             if (disambiguationFile === fromFile) {
@@ -453,9 +454,9 @@ export class Board {
             }
         }
 
-        let castlingNullification = 0;
+        //let castlingNullification = 0;
         if (sideEffect > 0) {
-            castlingNullification = sideEffect & (MoveSideEffect.NullifiesKingsideCastling + MoveSideEffect.NullifiesQueensideCastling);
+            //castlingNullification = sideEffect & (MoveSideEffect.NullifiesKingsideCastling + MoveSideEffect.NullifiesQueensideCastling);
             newBoard.castlingStatus = Board.getNewCastlingPotential(this.castlingStatus, sideEffect, this.isWhiteToMove);
             if (sideEffect === MoveSideEffect.EnablesEnPassantCapture) {
                 newBoard.enPassantActiveFile = move.fromSquare.file;
