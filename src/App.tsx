@@ -57,8 +57,7 @@ function App() {
       return currPlayer;
     };
 
-    currPlayer = pairing.createPlayerForNextMove(playersBoard,
-      handleMoveMade);
+    currPlayer = pairing.createPlayerForNextMove(playersBoard, handleMoveMade);
     return currPlayer;
   }
 
@@ -83,7 +82,7 @@ function App() {
     setPlayerForFirstMove();
   }
 
-  let boardOrientation: Chess.Player = pairing?.getPreferredOrientation();
+  const boardOrientation: Chess.Player = pairing?.getPreferredOrientation();
 
   function handlePairingSelected(e: PairingSelectedEvent) {
     setPairing(e.detail);

@@ -23,6 +23,7 @@ export default class GamePairing {
     public getPreferredOrientation(): Chess.Player {
         if (this.whitePlayerType === Chess.PlayerType.Engine
             && this.blackPlayerType === Chess.PlayerType.Human) {
+            // Human (black) is playing computer (white), so flip the board.
             return Chess.Player.Black;
         }
         return Chess.Player.White;

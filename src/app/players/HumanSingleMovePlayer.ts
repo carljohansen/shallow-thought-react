@@ -19,6 +19,7 @@ export class HumanSingleMovePlayer implements ISingleMovePlayer {
         this.isActive = true;
         this.handleProgress(new CustomEvent("progress", { detail: 0 }));
     }
+    
     dispose(): void {
     }
 
