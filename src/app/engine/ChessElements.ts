@@ -55,6 +55,15 @@ export enum CastlingPotential {
     BlackQueenside = 8
 }
 
+export interface MoveAnimationDefinition {
+    fromSquareIndex: number;
+    toSquareIndex: number;
+    movingPiece: ColouredPiece;
+    capturedPiece?: ColouredPiece;
+    captureSquareIndex?: number; // useful in en-passant, if null then just use toSquareIndex.
+    finalPiece?: ColouredPiece; // useful in promotion, if null then just use movingPiece.
+}
+
 export class BoardResources {
 
     public static squares: BoardSquare[];
@@ -234,6 +243,10 @@ export class Board {
 
     public isWhiteToMove: boolean;
 
+    public getCurrentPlayer(): Chess.Player { return this.isWhiteToMove ? Chess.Player.White : Chess.Player.Black };
+
+    public getNonCurrentPlayer(): Chess.Player { return this.isWhiteToMove ? Chess.Player.Black : Chess.Player.White };
+
     public castlingStatus: number;
 
     public enPassantActiveFile: number;
@@ -241,6 +254,8 @@ export class Board {
     public moveCount: number;
 
     public numPieces: number = 0;
+
+    public newMoveAnimation: MoveAnimationDefinition;
 
     public static create(whitePieces: { square: string, piece: PieceType }[],
         blackPieces: { square: string, piece: PieceType }[],
@@ -277,6 +292,38 @@ export class Board {
 
     public forEachOccupiedSquare(fn: (s: OccupiedSquare) => void, orientation: Chess.Player = Chess.Player.White) {
         this.squares.forEach((pieceId: number, squareId: number) => {
+            if (pieceId) {
+                fn({
+                    square: orientation === Chess.Player.White ? BoardResources.squares[squareId] : BoardResources.flippedSquares[squareId],
+                    piece: BoardResources.pieces[pieceId]
+                });
+            }
+        });
+    }
+
+    public forEachOccupiedSquareBeforeAnimation(fn: (s: OccupiedSquare) => void,
+        orientation: Chess.Player = Chess.Player.White,
+        newMoveAnimation: MoveAnimationDefinition) {
+
+        if (!newMoveAnimation) {
+            this.forEachOccupiedSquare(fn, orientation);
+            return;
+        }
+
+        this.squares.forEach((pieceId: number, squareId: number) => {
+            if (squareId === newMoveAnimation.fromSquareIndex) {
+                // Report the moving piece as being on its start square.
+                pieceId = newMoveAnimation.movingPiece.piece;
+            }
+            if (squareId === newMoveAnimation.toSquareIndex
+                && !newMoveAnimation.captureSquareIndex) {
+                // Report the dest square as being either empty or containing the piece that's about to be captured.
+                pieceId = newMoveAnimation.capturedPiece?.piece ?? 0;
+            }
+            if (squareId === newMoveAnimation.captureSquareIndex) {
+                // Report the e.p square as containing the pawn that's about to be captured.
+                pieceId = newMoveAnimation.capturedPiece?.piece ?? 0;
+            }
             if (pieceId) {
                 fn({
                     square: orientation === Chess.Player.White ? BoardResources.squares[squareId] : BoardResources.flippedSquares[squareId],
@@ -393,7 +440,7 @@ export class Board {
             : matchingMove;
     }
 
-    public applyMove(move: GameMove): Board {
+    public applyMove(move: GameMove, calculateAnimations: boolean = false): Board {
         const newBoard = new Board();
         newBoard.squares = this.squares.slice();
         const fromIndex = move.fromSquare.index;
@@ -403,6 +450,18 @@ export class Board {
         newBoard.squares[fromIndex] = 0;
         newBoard.numPieces = this.numPieces - (move.isCapture ? 1 : 0);
 
+        if (calculateAnimations) {
+            // 99% of the time we want the plain old move of the piece from origin to dest.
+            newBoard.newMoveAnimation = {
+                fromSquareIndex: move.fromSquare.index,
+                toSquareIndex: move.toSquare.index,
+                movingPiece: {
+                    piece: move.piece ?? Chess.PieceType.Pawn,
+                    player: this.isWhiteToMove ? Chess.Player.White : Chess.Player.Black
+                }
+            };
+        }
+
         if (move.isCapture
             && this.enPassantActiveFile
             && !this.squares[toIndex]) {
@@ -410,6 +469,14 @@ export class Board {
             const epCapturedPawnRank = this.isWhiteToMove ? 5 : 4;
             const epCapturedPawnIndex = BoardResources.byFileAndRank(this.enPassantActiveFile, epCapturedPawnRank).index;
             newBoard.squares[epCapturedPawnIndex] = 0; // Remove the e.p. captured pawn.
+
+            if (calculateAnimations) {
+                newBoard.newMoveAnimation.captureSquareIndex = epCapturedPawnIndex;
+                newBoard.newMoveAnimation.capturedPiece = { piece: Chess.PieceType.Pawn, player: this.getNonCurrentPlayer() }
+            }
+        } else if (move.isCapture && calculateAnimations) {
+            // Plain old capture - captured piece must vanish.
+            newBoard.newMoveAnimation.capturedPiece = this.getSquarePieceByIndex(toIndex);
         }
 
         const finalPieceType = (move.sideEffect === MoveSideEffect.PromoteToQueen
@@ -417,6 +484,9 @@ export class Board {
             : movingPiece);
         newBoard.squares[toIndex] = finalPieceType;
 
+        if (calculateAnimations && finalPieceType !== movingPiece) {
+            newBoard.newMoveAnimation.finalPiece = { piece: finalPieceType, player: this.getNonCurrentPlayer() };
+        }
 
         let sideEffect = move.sideEffect;
 

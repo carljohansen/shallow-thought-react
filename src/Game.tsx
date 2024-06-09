@@ -12,11 +12,10 @@ export interface MoveSelectedEvent extends CustomEvent<GameMove> { }
 interface GameProps {
     gameBoard: Chess.Board,
     orientation: Chess.Player,
-    newMove?: Chess.GameMove,
     handleMoveInput: (e: MoveSelectedEvent) => void
 }
 
-const Game: FC<GameProps> = ({ gameBoard, orientation, handleMoveInput, newMove = null }) => {
+const Game: FC<GameProps> = ({ gameBoard, orientation, handleMoveInput }) => {
 
     const [selectedFromSquare, setSelectedFromSquare] = useState<BoardSquare>(null);
 
@@ -64,9 +63,10 @@ const Game: FC<GameProps> = ({ gameBoard, orientation, handleMoveInput, newMove 
     }
 
     const pieceElements: JSX.Element[] = [];
-    gameBoard.forEachOccupiedSquare(os => pieceElements.push(
-        <Piece key={os.square.index} occupiedSquare={os} />
-    ), orientation);
+    gameBoard.forEachOccupiedSquareBeforeAnimation(os => pieceElements.push(
+        <Piece key={os.square.index} occupiedSquare={os} animatingMove={gameBoard.newMoveAnimation} />),
+        orientation,
+        gameBoard.newMoveAnimation);
 
     return (
         <div className="boardgrid">

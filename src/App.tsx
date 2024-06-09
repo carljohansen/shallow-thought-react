@@ -14,7 +14,6 @@ Chess.BoardResources.init();
 function App() {
 
   const [pairing, setPairing] = useState<GamePairing>(null);
-  const [newMove, setNewMove] = useState<Chess.GameMove>(null);
   const [moveList, setMoveList] = useState<Chess.GameMove[]>([]);
   const [board, setBoard] = useState<Chess.Board>(null);
   const [player, setPlayer] = useState<ISingleMovePlayer>(null);
@@ -34,7 +33,6 @@ function App() {
       currPlayer.dispose();
 
       const move = e.detail;
-      setNewMove(move);
 
       if (!move) {
         alert("Game over!");
@@ -44,7 +42,7 @@ function App() {
       // Annotate the move with disambiguation information (this improves our move list display).
       move.disambiguationSquare = playersBoard.getMoveDisambiguationSquare(move);
 
-      const newBoard = playersBoard.applyMove(move);
+      const newBoard = playersBoard.applyMove(move, true);
       move.checkHint = newBoard.getCheckState();
 
       setBoard(newBoard);
@@ -84,7 +82,7 @@ function App() {
 
   function handlePairingSelected(e: PairingSelectedEvent) {
     const selectedPairing = e.detail;
-    const initialBoard = GameHelper.createBoardFromFen(selectedPairing.startingPositionFen);
+    const initialBoard = selectedPairing.createBoard();
     setBoard(initialBoard);
     setPairing(selectedPairing);
     if (!initialBoard.isWhiteToMove) {
@@ -104,7 +102,7 @@ function App() {
             <PairingSelector
               handlePairingSelected={handlePairingSelected} />
           ) :
-          (<Game gameBoard={board} newMove={newMove} handleMoveInput={onHumanMoveSelected} orientation={boardOrientation} />)
+          (<Game gameBoard={board} handleMoveInput={onHumanMoveSelected} orientation={boardOrientation} />)
         }
       </header>
     </div>
