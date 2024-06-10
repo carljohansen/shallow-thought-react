@@ -128,6 +128,10 @@ export class BoardResources {
             && 1 <= rank
             && rank <= 8);
     }
+
+    public static colouredPieceToPieceId(piece: ColouredPiece): number {
+        return piece.player * 7 + piece.piece;
+    }
 }
 
 export enum Player {
@@ -313,16 +317,16 @@ export class Board {
         this.squares.forEach((pieceId: number, squareId: number) => {
             if (squareId === newMoveAnimation.fromSquareIndex) {
                 // Report the moving piece as being on its start square.
-                pieceId = newMoveAnimation.movingPiece.piece;
+                pieceId = BoardResources.colouredPieceToPieceId(newMoveAnimation.movingPiece);
             }
             if (squareId === newMoveAnimation.toSquareIndex
                 && !newMoveAnimation.captureSquareIndex) {
                 // Report the dest square as being either empty or containing the piece that's about to be captured.
-                pieceId = newMoveAnimation.capturedPiece?.piece ?? 0;
+                pieceId = newMoveAnimation.capturedPiece ? BoardResources.colouredPieceToPieceId(newMoveAnimation.capturedPiece) : 0;
             }
             if (squareId === newMoveAnimation.captureSquareIndex) {
                 // Report the e.p square as containing the pawn that's about to be captured.
-                pieceId = newMoveAnimation.capturedPiece?.piece ?? 0;
+                pieceId = newMoveAnimation.capturedPiece ? BoardResources.colouredPieceToPieceId(newMoveAnimation.capturedPiece) : 0;
             }
             if (pieceId) {
                 fn({

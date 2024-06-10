@@ -64,7 +64,7 @@ const Game: FC<GameProps> = ({ gameBoard, orientation, handleMoveInput }) => {
 
     const pieceElements: JSX.Element[] = [];
     gameBoard.forEachOccupiedSquareBeforeAnimation(os => pieceElements.push(
-        <Piece key={os.square.index} occupiedSquare={os} animatingMove={gameBoard.newMoveAnimation} />),
+        <Piece key={os.square.index + "_" + os.piece.piece + "_" + os.piece.player} occupiedSquare={os} animatingMove={gameBoard.newMoveAnimation} />),
         orientation,
         gameBoard.newMoveAnimation);
 
