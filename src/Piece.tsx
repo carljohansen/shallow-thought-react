@@ -54,7 +54,8 @@ const Piece: FC<PieceProps> = ({ occupiedSquare, animatingMove }) => {
     const imageName = `/img/${imagePieceName}${pieceColour === Chess.Player.White ? 'l' : 'd'}.png`;
     const leftPx = (occupiedSquare.square.screenFile - 1) * 60;
     const topPx = (8 - occupiedSquare.square.screenRank) * 60;
-    const initialPos = { left: `${leftPx}px`, top: `${topPx}px` };
+    const zIndex = isInPrimaryAnimation ? 10 : 1;
+    const initialPos = { left: `${leftPx}px`, top: `${topPx}px`, zIndex: `${zIndex}` };
 
     if (isInPrimaryAnimation) {
         const toSquare = Chess.BoardResources.squares[animatingMove.toSquareIndex];
@@ -63,7 +64,7 @@ const Piece: FC<PieceProps> = ({ occupiedSquare, animatingMove }) => {
         const destPos = { left: `${leftPx}px`, top: `${topPx}px` };
         return (
             <motion.img alt="" className="piece" src={imageName} style={initialPos} animate={destPos}
-                transition={{ duration: 0.3 }}></motion.img>
+                transition={{ duration: 0.25 }}></motion.img>
         )
     }
 
@@ -72,7 +73,7 @@ const Piece: FC<PieceProps> = ({ occupiedSquare, animatingMove }) => {
             <motion.img alt="" className="piece" src={imageName} style={initialPos} 
                 initial={{ opacity: 1 }} 
                 animate={{ opacity: 0 }}
-                transition={{ delay: 0.3, duration:0 }}></motion.img>
+                transition={{ delay: 0.25, duration:0 }}></motion.img>
         )
     }
 
