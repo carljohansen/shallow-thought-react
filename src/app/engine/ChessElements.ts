@@ -324,10 +324,17 @@ export class Board {
                 // Report the dest square as being either empty or containing the piece that's about to be captured.
                 pieceId = newMoveAnimation.capturedPiece ? BoardResources.colouredPieceToPieceId(newMoveAnimation.capturedPiece) : 0;
             }
-            if (squareId === newMoveAnimation.captureSquareIndex) {
-                // Report the e.p square as containing the pawn that's about to be captured.
-                pieceId = newMoveAnimation.capturedPiece ? BoardResources.colouredPieceToPieceId(newMoveAnimation.capturedPiece) : 0;
+            if (squareId === newMoveAnimation.toSquareIndex
+                && newMoveAnimation.captureSquareIndex) {
+                // In an e.p., report the dest square as being empty (which it is)
+                // The actual capture square can simply be reported as containing the pawn that it indeed contains.
+                pieceId = 0;
             }
+            // if (squareId === newMoveAnimation.captureSquareIndex) {
+            //     // Report the e.p pawn square as being empty (which it is, even though we're)
+            //     pieceId = newMoveAnimation.capturedPiece ? BoardResources.colouredPieceToPieceId(newMoveAnimation.capturedPiece) : 0;
+            // }
+
             if (pieceId) {
                 fn({
                     square: orientation === Chess.Player.White ? BoardResources.squares[squareId] : BoardResources.flippedSquares[squareId],
