@@ -317,7 +317,8 @@ export class Board {
         this.squares.forEach((pieceId: number, squareId: number) => {
             if (squareId === newMoveAnimation.fromSquareIndex) {
                 // Report the moving piece as being on its start square.
-                pieceId = BoardResources.colouredPieceToPieceId(newMoveAnimation.movingPiece);
+                const finalPiece = newMoveAnimation.finalPiece ? newMoveAnimation.finalPiece : newMoveAnimation.movingPiece;
+                pieceId = BoardResources.colouredPieceToPieceId(finalPiece);
             }
             if (squareId === newMoveAnimation.toSquareIndex
                 && !newMoveAnimation.captureSquareIndex) {
@@ -330,10 +331,6 @@ export class Board {
                 // The actual capture square can simply be reported as containing the pawn that it indeed contains.
                 pieceId = 0;
             }
-            // if (squareId === newMoveAnimation.captureSquareIndex) {
-            //     // Report the e.p pawn square as being empty (which it is, even though we're)
-            //     pieceId = newMoveAnimation.capturedPiece ? BoardResources.colouredPieceToPieceId(newMoveAnimation.capturedPiece) : 0;
-            // }
 
             if (pieceId) {
                 fn({

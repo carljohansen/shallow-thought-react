@@ -5,11 +5,13 @@ import { motion } from "framer-motion";
 
 interface PieceProps {
     occupiedSquare: Chess.OccupiedSquare,
-    animatingMove?: Chess.MoveAnimationDefinition
+    animatingMove?: Chess.MoveAnimationDefinition,
+    orientation: Chess.Player
 }
 
-const Piece: FC<PieceProps> = ({ occupiedSquare, animatingMove }) => {
+const Piece: FC<PieceProps> = ({ occupiedSquare, animatingMove, orientation }) => {
 
+    const squares: Chess.BoardSquare[] = orientation === Chess.Player.White ? Chess.BoardResources.squares : Chess.BoardResources.flippedSquares;
     const isInPrimaryAnimation = !!animatingMove
         && animatingMove.fromSquareIndex === occupiedSquare.square.index;
     const isVanishing = !!animatingMove
@@ -58,9 +60,9 @@ const Piece: FC<PieceProps> = ({ occupiedSquare, animatingMove }) => {
     const initialPos = { left: `${leftPx}px`, top: `${topPx}px`, zIndex: `${zIndex}` };
 
     if (isInPrimaryAnimation) {
-        const toSquare = Chess.BoardResources.squares[animatingMove.toSquareIndex];
-        const leftPx = (toSquare.file - 1) * 60;
-        const topPx = (8 - toSquare.rank) * 60;
+        const toSquare = squares[animatingMove.toSquareIndex];
+        const leftPx = (toSquare.screenFile - 1) * 60;
+        const topPx = (8 - toSquare.screenRank) * 60;
         const destPos = { left: `${leftPx}px`, top: `${topPx}px` };
         return (
             <motion.img alt="" className="piece" src={imageName} style={initialPos} animate={destPos}
@@ -70,10 +72,10 @@ const Piece: FC<PieceProps> = ({ occupiedSquare, animatingMove }) => {
 
     if (isVanishing) {
         return (
-            <motion.img alt="" className="piece" src={imageName} style={initialPos} 
-                initial={{ opacity: 1 }} 
+            <motion.img alt="" className="piece" src={imageName} style={initialPos}
+                initial={{ opacity: 1 }}
                 animate={{ opacity: 0 }}
-                transition={{ delay: 0.25, duration:0 }}></motion.img>
+                transition={{ delay: 0.25, duration: 0 }}></motion.img>
         )
     }
 
