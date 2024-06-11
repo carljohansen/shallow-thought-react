@@ -22,3 +22,7 @@ div.pairing-selector-wrapper .dropdowns label:after {
 div.pairing-selector-wrapper button {
     margin-top: 10px
 }
+
+div.pairing-selector-wrapper textarea {
+    margin-top: 10px
+}

@@ -1,5 +1,6 @@
 import { Progress } from 'react-sweet-progress';
 import "react-sweet-progress/lib/style.css";
+import './app/ui/css/progressbar.component.css';
 import { FC, useState } from 'react'
 import { ISingleMovePlayer, ProgressUpdatedEvent } from './app/players/PlayerInterface';
 
@@ -16,12 +17,14 @@ const MoveProgressBar: FC<ProgressBarProps> = ({ player }) => {
     })
 
     return (
-        <Progress
-            percent={progress}
-            type="circle"
-            status="active"
-            style={{ width: "40px" }}
-        />
+        <div className="progress-outer">
+            <Progress
+                percent={progress}
+                type="circle"
+                status="active"
+                style={{ width: "40px" }}
+            />
+        </div>
     )
 }
 

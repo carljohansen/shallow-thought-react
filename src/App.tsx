@@ -35,7 +35,9 @@ function App() {
       const move = e.detail;
 
       if (!move) {
-        alert("Game over!");
+        setTimeout(() => {
+          alert('Game over!');
+        }, 400);
         return null;
       }
 
