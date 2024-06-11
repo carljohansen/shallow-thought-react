@@ -48,7 +48,6 @@ function App() {
 
       setBoard(newBoard);
       setMoveList(curr => [...curr, move])
-      //this.moveHistory.push(validatedMove);
 
       setPlayerForNextMove(newBoard);
       return currPlayer;
