@@ -1,5 +1,5 @@
 import * as Chess from './app/engine/ChessElements'
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 import Game, { MoveSelectedEvent } from './Game';
 import MoveList from './MoveList';
@@ -57,9 +57,7 @@ function App() {
     return currPlayer;
   }
 
-  const onHumanMoveSelected = useCallback((event: MoveSelectedEvent) => {
-    player.handleMoveSelection(event);
-  }, [player]);
+  const onHumanMoveSelected = (e: MoveSelectedEvent) => { player.handleMoveSelection(e); }
 
   function setPlayerForFirstMove() {
     if (pairing === null) {
