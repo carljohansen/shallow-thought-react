@@ -62,7 +62,6 @@ export class ComputerPlayer {
         }
 
         let maxDepth = isCaptureChain ? 6 : 4;
-        maxDepth = 6;
 
         let bestMoveSoFar: Chess.GameMove = null;
         let bestScoreSoFar: number = null;
