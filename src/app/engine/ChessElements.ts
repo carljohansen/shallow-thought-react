@@ -62,6 +62,7 @@ export interface MoveAnimationDefinition {
     capturedPiece?: ColouredPiece;
     captureSquareIndex?: number; // useful in en-passant, if null then just use toSquareIndex.
     finalPiece?: ColouredPiece; // useful in promotion, if null then just use movingPiece.
+    castlingType: CastlingPotential // zero for non-castling moves.  If non-zero then ignore all other properties.
 }
 
 export class BoardResources {
@@ -131,6 +132,96 @@ export class BoardResources {
 
     public static colouredPieceToPieceId(piece: ColouredPiece): number {
         return piece.player * 7 + piece.piece;
+    }
+
+    public static getCastlingAnimation(move: Chess.MoveAnimationDefinition, renderingSquareIndex: number): Chess.MoveAnimationDefinition {
+        if (!move.castlingType) {
+            return null;
+        }
+        switch (move.castlingType) {
+            case Chess.CastlingPotential.WhiteQueenside:
+                if (renderingSquareIndex === this.byAlgebraic("a1").index
+                || renderingSquareIndex === this.byAlgebraic("d1").index) {
+                    return {
+                        fromSquareIndex: renderingSquareIndex,
+                        toSquareIndex: this.byAlgebraic("d1").index,
+                        movingPiece: { piece: Chess.PieceType.Rook, player: Chess.Player.White },
+                        castlingType: 0
+                    };
+                }
+                if (renderingSquareIndex === this.byAlgebraic("e1").index
+                || renderingSquareIndex === this.byAlgebraic("c1").index) {
+                    return {
+                        fromSquareIndex: renderingSquareIndex,
+                        toSquareIndex: this.byAlgebraic("c1").index,
+                        movingPiece: { piece: Chess.PieceType.King, player: Chess.Player.White },
+                        castlingType: 0
+                    };
+                }
+                break;
+            case Chess.CastlingPotential.WhiteKingside:
+                if (renderingSquareIndex === this.byAlgebraic("h1").index
+                || renderingSquareIndex === this.byAlgebraic("f1").index) {
+                    return {
+                        fromSquareIndex: renderingSquareIndex,
+                        toSquareIndex: this.byAlgebraic("f1").index,
+                        movingPiece: { piece: Chess.PieceType.Rook, player: Chess.Player.White },
+                        castlingType: 0
+                    };
+                }
+                if (renderingSquareIndex === this.byAlgebraic("e1").index
+                || renderingSquareIndex === this.byAlgebraic("g1").index) {
+                    return {
+                        fromSquareIndex: renderingSquareIndex,
+                        toSquareIndex: this.byAlgebraic("g1").index,
+                        movingPiece: { piece: Chess.PieceType.King, player: Chess.Player.White },
+                        castlingType: 0
+                    };
+                }
+                break;
+            case Chess.CastlingPotential.BlackQueenside:
+                if (renderingSquareIndex === this.byAlgebraic("a8").index
+                    || renderingSquareIndex === this.byAlgebraic("d8").index) {
+                    return {
+                        fromSquareIndex: renderingSquareIndex,
+                        toSquareIndex: this.byAlgebraic("d8").index,
+                        movingPiece: { piece: Chess.PieceType.Rook, player: Chess.Player.Black },
+                        castlingType: 0
+                    };
+                }
+                if (renderingSquareIndex === this.byAlgebraic("e8").index
+                    || renderingSquareIndex === this.byAlgebraic("c8").index) {
+                    return {
+                        fromSquareIndex: renderingSquareIndex,
+                        toSquareIndex: this.byAlgebraic("c8").index,
+                        movingPiece: { piece: Chess.PieceType.King, player: Chess.Player.Black },
+                        castlingType: 0
+                    };
+                }
+                break;
+            case Chess.CastlingPotential.BlackKingside:
+                if (renderingSquareIndex === this.byAlgebraic("h8").index
+                || renderingSquareIndex === this.byAlgebraic("f8").index) {
+                    return {
+                        fromSquareIndex: renderingSquareIndex,
+                        toSquareIndex: this.byAlgebraic("f8").index,
+                        movingPiece: { piece: Chess.PieceType.Rook, player: Chess.Player.Black },
+                        castlingType: 0
+                    };
+                }
+                if (renderingSquareIndex === this.byAlgebraic("e8").index
+                || renderingSquareIndex === this.byAlgebraic("g8").index) {
+                    return {
+                        fromSquareIndex: renderingSquareIndex,
+                        toSquareIndex: this.byAlgebraic("g8").index,
+                        movingPiece: { piece: Chess.PieceType.King, player: Chess.Player.Black },
+                        castlingType: 0
+                    };
+                }
+                break;
+        }
+
+        return null;
     }
 }
 
@@ -305,28 +396,28 @@ export class Board {
         });
     }
 
-    public forEachOccupiedSquareBeforeAnimation(fn: (s: OccupiedSquare) => void,
+    public forEachOccupiedSquareBeforeAnimation(fn: (s: OccupiedSquare, animation: MoveAnimationDefinition) => void,
         orientation: Chess.Player = Chess.Player.White,
         newMoveAnimation: MoveAnimationDefinition) {
 
         if (!newMoveAnimation) {
-            this.forEachOccupiedSquare(fn, orientation);
-            return;
+            return this.forEachOccupiedSquare((os) => fn(os, null), orientation);
         }
 
         this.squares.forEach((pieceId: number, squareId: number) => {
-            if (squareId === newMoveAnimation.fromSquareIndex) {
+            const resolvedAnimation = BoardResources.getCastlingAnimation(newMoveAnimation, squareId) ?? newMoveAnimation;
+            if (squareId === resolvedAnimation.fromSquareIndex) {
                 // Report the moving piece as being on its start square.
-                const finalPiece = newMoveAnimation.finalPiece ? newMoveAnimation.finalPiece : newMoveAnimation.movingPiece;
+                const finalPiece = resolvedAnimation.finalPiece ? resolvedAnimation.finalPiece : resolvedAnimation.movingPiece;
                 pieceId = BoardResources.colouredPieceToPieceId(finalPiece);
             }
-            if (squareId === newMoveAnimation.toSquareIndex
-                && !newMoveAnimation.captureSquareIndex) {
+            if (squareId === resolvedAnimation.toSquareIndex
+                && !resolvedAnimation.captureSquareIndex) {
                 // Report the dest square as being either empty or containing the piece that's about to be captured.
-                pieceId = newMoveAnimation.capturedPiece ? BoardResources.colouredPieceToPieceId(newMoveAnimation.capturedPiece) : 0;
+                pieceId = resolvedAnimation.capturedPiece ? BoardResources.colouredPieceToPieceId(resolvedAnimation.capturedPiece) : 0;
             }
-            if (squareId === newMoveAnimation.toSquareIndex
-                && newMoveAnimation.captureSquareIndex) {
+            if (squareId === resolvedAnimation.toSquareIndex
+                && resolvedAnimation.captureSquareIndex) {
                 // In an e.p., report the dest square as being empty (which it is)
                 // The actual capture square can simply be reported as containing the pawn that it indeed contains.
                 pieceId = 0;
@@ -335,8 +426,10 @@ export class Board {
             if (pieceId) {
                 fn({
                     square: orientation === Chess.Player.White ? BoardResources.squares[squareId] : BoardResources.flippedSquares[squareId],
-                    piece: BoardResources.pieces[pieceId]
-                });
+                    piece: BoardResources.pieces[pieceId],
+                },
+                    resolvedAnimation
+                );
             }
         });
     }
@@ -466,7 +559,8 @@ export class Board {
                 movingPiece: {
                     piece: move.piece ?? Chess.PieceType.Pawn,
                     player: this.isWhiteToMove ? Chess.Player.White : Chess.Player.Black
-                }
+                },
+                castlingType: 0
             };
         }
 
@@ -497,7 +591,7 @@ export class Board {
         }
 
         let sideEffect = move.sideEffect;
-
+        let castlingAction: CastlingPotential = 0;
         if (movingPiece === PieceType.King || movingPiece === (PieceType.King + 7)) {
             if (Math.abs(move.fromSquare.file - move.toSquare.file) === 2) {
                 // Castling: move the rook.
@@ -508,18 +602,22 @@ export class Board {
                     if (isKingsideCastling) {
                         rookFromSquare = BoardResources.byFileAndRank(8, 1);
                         rookToSquare = BoardResources.byFileAndRank(6, 1);
+                        castlingAction = CastlingPotential.WhiteKingside;
                     } else {
                         rookFromSquare = BoardResources.byFileAndRank(1, 1);
                         rookToSquare = BoardResources.byFileAndRank(4, 1);
+                        castlingAction = CastlingPotential.WhiteQueenside;
                     }
                 } else {
                     // Black is castling
                     if (isKingsideCastling) {
                         rookFromSquare = BoardResources.byFileAndRank(8, 8);
                         rookToSquare = BoardResources.byFileAndRank(6, 8);
+                        castlingAction = CastlingPotential.BlackKingside;
                     } else {
                         rookFromSquare = BoardResources.byFileAndRank(1, 8);
                         rookToSquare = BoardResources.byFileAndRank(4, 8);
+                        castlingAction = CastlingPotential.BlackQueenside;
                     }
                 }
                 const rookFromIndex = rookFromSquare.index;
@@ -529,6 +627,14 @@ export class Board {
                 newBoard.squares[rookToIndex] = rookPieceType;
 
                 sideEffect = MoveSideEffect.NullifiesKingsideCastling + MoveSideEffect.NullifiesQueensideCastling;
+                if (calculateAnimations) {
+                    newBoard.newMoveAnimation = {
+                        castlingType: castlingAction,
+                        fromSquareIndex: -1,
+                        toSquareIndex: -1,
+                        movingPiece: null
+                    }
+                }
             }
         }
 
