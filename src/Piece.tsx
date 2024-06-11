@@ -1,6 +1,6 @@
 import * as Chess from './app/engine/ChessElements';
 import './app/ui/css/piece.component.css';
-import React, { FC } from 'react';
+import { FC } from 'react';
 import { motion } from "framer-motion";
 
 interface PieceProps {

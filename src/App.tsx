@@ -6,7 +6,6 @@ import MoveList from './MoveList';
 import MoveProgressBar from './MoveProgressBar';
 import { ISingleMovePlayer, MoveEvent } from './app/players/PlayerInterface';
 import GamePairing from './app/players/GamePairing';
-import GameHelper from './app/engine/GameHelper';
 import PairingSelector, { PairingSelectedEvent } from './PairingSelector';
 
 Chess.BoardResources.init();
