@@ -152,10 +152,10 @@ class EvaluationFunction {
         EvaluationFunction.ensureAttackSquareWeights();
         const playerIndex = board.isWhiteToMove ? 0 : 1;
         const opponentIndex = 1 - playerIndex;
-        const scoreScaler = [1, -1];
+        const scoreScaler: number[] = [1, -1];
 
         board.forEachOccupiedSquare(square => {
-            result += EvaluationFunction.materialValues[square.piece.piece] * (square.piece.player === Chess.Player.White ? 1 : -1);
+            result += EvaluationFunction.materialValues[square.piece.piece] * scoreScaler[square.piece.player];
         });
 
         for (let move of movesAndReplies) {

@@ -141,7 +141,7 @@ export class BoardResources {
         switch (move.castlingType) {
             case Chess.CastlingPotential.WhiteQueenside:
                 if (renderingSquareIndex === this.byAlgebraic("a1").index
-                || renderingSquareIndex === this.byAlgebraic("d1").index) {
+                    || renderingSquareIndex === this.byAlgebraic("d1").index) {
                     return {
                         fromSquareIndex: renderingSquareIndex,
                         toSquareIndex: this.byAlgebraic("d1").index,
@@ -150,7 +150,7 @@ export class BoardResources {
                     };
                 }
                 if (renderingSquareIndex === this.byAlgebraic("e1").index
-                || renderingSquareIndex === this.byAlgebraic("c1").index) {
+                    || renderingSquareIndex === this.byAlgebraic("c1").index) {
                     return {
                         fromSquareIndex: renderingSquareIndex,
                         toSquareIndex: this.byAlgebraic("c1").index,
@@ -161,7 +161,7 @@ export class BoardResources {
                 break;
             case Chess.CastlingPotential.WhiteKingside:
                 if (renderingSquareIndex === this.byAlgebraic("h1").index
-                || renderingSquareIndex === this.byAlgebraic("f1").index) {
+                    || renderingSquareIndex === this.byAlgebraic("f1").index) {
                     return {
                         fromSquareIndex: renderingSquareIndex,
                         toSquareIndex: this.byAlgebraic("f1").index,
@@ -170,7 +170,7 @@ export class BoardResources {
                     };
                 }
                 if (renderingSquareIndex === this.byAlgebraic("e1").index
-                || renderingSquareIndex === this.byAlgebraic("g1").index) {
+                    || renderingSquareIndex === this.byAlgebraic("g1").index) {
                     return {
                         fromSquareIndex: renderingSquareIndex,
                         toSquareIndex: this.byAlgebraic("g1").index,
@@ -201,7 +201,7 @@ export class BoardResources {
                 break;
             case Chess.CastlingPotential.BlackKingside:
                 if (renderingSquareIndex === this.byAlgebraic("h8").index
-                || renderingSquareIndex === this.byAlgebraic("f8").index) {
+                    || renderingSquareIndex === this.byAlgebraic("f8").index) {
                     return {
                         fromSquareIndex: renderingSquareIndex,
                         toSquareIndex: this.byAlgebraic("f8").index,
@@ -210,7 +210,7 @@ export class BoardResources {
                     };
                 }
                 if (renderingSquareIndex === this.byAlgebraic("e8").index
-                || renderingSquareIndex === this.byAlgebraic("g8").index) {
+                    || renderingSquareIndex === this.byAlgebraic("g8").index) {
                     return {
                         fromSquareIndex: renderingSquareIndex,
                         toSquareIndex: this.byAlgebraic("g8").index,

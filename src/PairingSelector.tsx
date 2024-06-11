@@ -11,13 +11,13 @@ interface PairingSelectorProps {
 
 const PairingSelector: FC<PairingSelectorProps> = ({ handlePairingSelected }) => {
 
-    const standardGameFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    const standardGameFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
 
     const [whiteSelection, setWhiteSelection] = useState(Chess.PlayerType.Human);
-    const [blackSelection, setBlackSelection] = useState(Chess.PlayerType.Human);
+    const [blackSelection, setBlackSelection] = useState(Chess.PlayerType.Engine);
     const [setupFen, setSetupFen] = useState(standardGameFen);
 
-    const eventToPlayerType = (e: ChangeEvent<HTMLSelectElement>) => e.target.value === "human" ? Chess.PlayerType.Human : Chess.PlayerType.Engine;
+    const eventToPlayerType = (e: ChangeEvent<HTMLSelectElement>) => parseInt(e.target.value);
 
     const handleWhiteChange = (e: ChangeEvent<HTMLSelectElement>) => {
         setWhiteSelection(eventToPlayerType(e));
@@ -38,13 +38,13 @@ const PairingSelector: FC<PairingSelectorProps> = ({ handlePairingSelected }) =>
     return (
         <div className="pairing-selector-wrapper">
             <div className="dropdowns">
-                <label>White</label><select onChange={handleWhiteChange}>
-                    <option value="human">Human</option>
-                    <option value="engine">Computer</option>
+                <label>White</label><select onChange={handleWhiteChange} defaultValue={whiteSelection}>
+                    <option value={Chess.PlayerType.Human}>Human</option>
+                    <option value={Chess.PlayerType.Engine}>Computer</option>
                 </select>
-                <label>Black</label><select onChange={handleBlackChange}>
-                    <option value="human">Human</option>
-                    <option value="engine">Computer</option>
+                <label>Black</label><select onChange={handleBlackChange} defaultValue={blackSelection}>
+                    <option value={Chess.PlayerType.Human}>Human</option>
+                    <option value={Chess.PlayerType.Engine}>Computer</option>
                 </select>
             </div>
             <div>
