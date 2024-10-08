@@ -23,11 +23,16 @@ function App() {
     }
   }, [player]);
 
-  function createPlayerForNextMove(playersBoard: Chess.Board): ISingleMovePlayer {
+  function createPlayerForNextMove(playersBoard: Chess.Board, gamePairing: GamePairing): ISingleMovePlayer {
 
     let currPlayer: ISingleMovePlayer;
 
     const handleMoveMade = (e: MoveEvent) => {
+
+      // This is called at the end of the Player's life, after they have chosen
+      // their move.  It applies the move to the App's board, disposes the Player
+      // and creates (but does not activate) a new Player for the next move.
+      // The new Player will be activated by the App's effect.
 
       currPlayer.dispose();
 
@@ -49,31 +54,21 @@ function App() {
       setBoard(newBoard);
       setMoveList(curr => [...curr, move])
 
-      setPlayerForNextMove(newBoard);
+      createAndSetPlayerForNextMove(newBoard, gamePairing);
       return currPlayer;
     };
-
-    currPlayer = pairing.createPlayerForNextMove(playersBoard, handleMoveMade);
+    currPlayer = gamePairing.createPlayerForNextMove(playersBoard, handleMoveMade);
     return currPlayer;
   }
 
   const onHumanMoveSelected = (e: MoveSelectedEvent) => { player.handleMoveSelection(e); }
 
-  function setPlayerForFirstMove() {
-    if (pairing === null) {
-      return
-    }
-    setPlayerForNextMove(board);
+  function setPlayerForFirstMove(initialBoard: Chess.Board, pairing: GamePairing) {
+    createAndSetPlayerForNextMove(initialBoard, pairing);
   }
 
-  function setPlayerForNextMove(newBoard: Chess.Board) {
-    setPlayer(createPlayerForNextMove(newBoard));
-  }
-
-  if (board
-    && board.moveCount === 0
-    && !player) {
-    setPlayerForFirstMove();
+  function createAndSetPlayerForNextMove(newBoard: Chess.Board, pairing: GamePairing) {
+    setPlayer(createPlayerForNextMove(newBoard, pairing));
   }
 
   const boardOrientation: Chess.Player = pairing?.getPreferredOrientation();
@@ -81,11 +76,15 @@ function App() {
   function handlePairingSelected(e: PairingSelectedEvent) {
     const selectedPairing = e.detail;
     const initialBoard = selectedPairing.createBoard();
+    
     setBoard(initialBoard);
     setPairing(selectedPairing);
+
     if (!initialBoard.isWhiteToMove) {
       setMoveList([null]); // blank move for white since black starts.
     }
+
+    setPlayerForFirstMove(initialBoard, selectedPairing);
   }
 
   return (
