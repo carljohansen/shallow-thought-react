@@ -44,3 +44,19 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+==========================================================================
+
+Carl note about Firebase.
+
+I deployed this app to GCP Firebase.  Here's what I did:
+
+First I created a Firebase project through the GCP web console (using Blaze PAYG).
+
+1. Run [ npm run build ] to put a prod build in the /build folder.
+2. Run [ npm install -g firebase-tools ] to install firebase CLI
+3. Run [ firebase login ]
+4. Run [ firebase init hosting ]
+5. Run [ firebase deploy --only hosting ]
+6. Go into Firebase GCP web console and add custom domain
+7. Go to my DNS host provider and add the CNAME entry that GCP tells us to add.
