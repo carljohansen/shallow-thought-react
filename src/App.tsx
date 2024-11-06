@@ -12,10 +12,10 @@ Chess.BoardResources.init();
 
 function App() {
 
-  const [pairing, setPairing] = useState<GamePairing>(null);
+  const [pairing, setPairing] = useState<GamePairing | null>(null);
   const [moveList, setMoveList] = useState<Chess.GameMove[]>([]);
-  const [board, setBoard] = useState<Chess.Board>(null);
-  const [player, setPlayer] = useState<ISingleMovePlayer>(null);
+  const [board, setBoard] = useState<Chess.Board | null>(null);
+  const [player, setPlayer] = useState<ISingleMovePlayer | null>(null);
 
   useEffect(() => {
     if (player) {
@@ -59,7 +59,7 @@ function App() {
     return currPlayer;
   }
 
-  const onHumanMoveSelected = (e: MoveSelectedEvent) => { player.handleMoveSelection(e); }
+  const onHumanMoveSelected = (e: MoveSelectedEvent) => { player && player.handleMoveSelection(e); }
 
   function setPlayerForFirstMove(initialBoard: Chess.Board, pairing: GamePairing) {
     createAndSetPlayerForNextMove(initialBoard, pairing);
@@ -69,7 +69,7 @@ function App() {
     setPlayer(createPlayerForNextMove(newBoard, pairing));
   }
 
-  const boardOrientation: Chess.Player = pairing?.getPreferredOrientation();
+  const boardOrientation: Chess.Player = pairing?.getPreferredOrientation() || Chess.Player.White;
 
   function handlePairingSelected(e: PairingSelectedEvent) {
     const selectedPairing = e.detail;

@@ -7,7 +7,7 @@ export interface MoveWithReplies {
 }
 
 interface EvaluatedMove {
-    move: Chess.GameMove;
+    move: Chess.GameMove | null;
     score: number;
 }
 
@@ -15,10 +15,10 @@ export class ComputerPlayer {
 
     public calculationProgress$: Subject<number> = new Subject<number>();
 
-    public getMovesAndReplies(board: Chess.Board, headStartMoves: Chess.GameMove[]): MoveWithReplies[] {
+    public getMovesAndReplies(board: Chess.Board, headStartMoves: Chess.GameMove[] | null): MoveWithReplies[] {
 
         let initialMoves = headStartMoves || board.getPotentialMoves(true);
-        const playerMoves = initialMoves.map(move => { return { move: move, replies: null } as MoveWithReplies; });
+        const playerMoves = initialMoves.map(move => { return { move: move, replies: [] } as MoveWithReplies; });
 
         for (let move of playerMoves) {
             if (move.move.isPawnAttack) {
@@ -35,7 +35,7 @@ export class ComputerPlayer {
         return legalMoves;
     }
 
-    public getBestMove(board: Chess.Board): Chess.GameMove {
+    public getBestMove(board: Chess.Board): Chess.GameMove | null {
 
         const bestMove = this.getBestMoveMinimax(board, null, 0, true, null);
         if (bestMove.move === null) {
@@ -44,7 +44,7 @@ export class ComputerPlayer {
         return bestMove.move;
     }
 
-    private getBestMoveMinimax(board: Chess.Board, headStartMoves: Chess.GameMove[], depth: number, isCaptureChain: boolean, alphaScore: number): EvaluatedMove {
+    private getBestMoveMinimax(board: Chess.Board, headStartMoves: Chess.GameMove[] | null, depth: number, isCaptureChain: boolean, alphaScore: number | null): EvaluatedMove {
 
         if (board.numPieces === 2) {
             // nothing but kings left.
@@ -63,8 +63,8 @@ export class ComputerPlayer {
 
         let maxDepth = isCaptureChain ? 6 : 4;
 
-        let bestMoveSoFar: Chess.GameMove = null;
-        let bestScoreSoFar: number = null;
+        let bestMoveSoFar: Chess.GameMove | null = null;
+        let bestScoreSoFar: number | null = null;
 
         const haveReachedDepthLimit = depth >= maxDepth;
         if (haveReachedDepthLimit) {
@@ -90,7 +90,7 @@ export class ComputerPlayer {
             let lineEvaluation: number;
 
             const boardAfterMove = board.applyMove(move.move);
-            let bestReply = this.getBestMoveMinimax(boardAfterMove, move.replies, depth + 1, isCaptureChain && move.move.isCapture, bestScoreSoFar);
+            let bestReply = this.getBestMoveMinimax(boardAfterMove, move.replies, depth + 1, isCaptureChain && (move.move.isCapture || false), bestScoreSoFar);
             lineEvaluation = bestReply.score;
 
             if (!bestMoveSoFar
@@ -108,10 +108,13 @@ export class ComputerPlayer {
             this.calculationProgress$.next(100);
         }
 
-        return { move: bestMoveSoFar, score: bestScoreSoFar };
+        return { move: bestMoveSoFar, score: bestScoreSoFar! };
     }
 
-    private static isBetterScore(newScore: number, baseScore, isWhiteToMove: boolean) {
+    private static isBetterScore(newScore: number, baseScore: number | null, isWhiteToMove: boolean) {
+        if (baseScore === null) {
+            return true;
+        }
         if (isWhiteToMove) {
             return newScore > baseScore;
         }
