@@ -3,7 +3,7 @@ import { ISingleMovePlayer, MoveEvent, ProgressUpdatedEvent } from './PlayerInte
 
 export class ArtificialSingleMovePlayer implements ISingleMovePlayer {
 
-    private engineWorker: Worker;
+    private engineWorker: Worker | undefined;
     private playedMove: Chess.GameMove;
     private handleProgress: (e: ProgressUpdatedEvent) => void;
 
@@ -18,12 +18,12 @@ export class ArtificialSingleMovePlayer implements ISingleMovePlayer {
     }
 
     // Computer player does not care what the user clicks.
-    handleMoveSelection = (e: MoveEvent) => { }
+    handleMoveSelection = () => { }
 
     activate(): void {
 
         if (!this.engineWorker) {
-            this.engineWorker = new Worker(new URL('../../artificialPlayerDispatch.ts', import.meta.url));
+            this.engineWorker = new Worker(new URL('../../artificialPlayerDispatch.ts', import.meta.url), { type: 'module' });
             this.engineWorker.onmessage = this.onMoveDecision;
         }
         this.handleProgress(new CustomEvent("progress", { detail: 0 }));
@@ -32,13 +32,13 @@ export class ArtificialSingleMovePlayer implements ISingleMovePlayer {
 
     private onMoveDecision = (e: MessageEvent) => {
 
-        var matchProgress = (data: any) => {
+        const matchProgress = (data: string) => {
             const myRegexp = /PROGRESS:(.+)/g;
-            var match = myRegexp.exec(data);
+            const match = myRegexp.exec(data);
             return match ? parseInt(match[1], 10) : null;
         };
 
-        let progress: number;
+        let progress: number | null;
         if ((progress = matchProgress(e.data)) !== null) {
             this.handleProgress(new CustomEvent("progress", { detail: progress }));
             return;

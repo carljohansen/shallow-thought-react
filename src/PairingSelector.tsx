@@ -3,7 +3,7 @@ import './app/ui/css/pairingselector.component.css';
 import { ChangeEvent, FC, useState } from 'react';
 import GamePairing from './app/players/GamePairing';
 
-export interface PairingSelectedEvent extends CustomEvent<GamePairing> { }
+export type PairingSelectedEvent = CustomEvent<GamePairing>;
 
 interface PairingSelectorProps {
     handlePairingSelected: (e: PairingSelectedEvent) => void

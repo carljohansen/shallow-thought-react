@@ -1,5 +1,5 @@
 import * as Chess from './app/engine/ChessElements'
-import React, { FC } from 'react';
+import { FC } from 'react';
 import { SquareSelectedEvent } from './Game';
 
 interface SquareProps {

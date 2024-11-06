@@ -5,9 +5,9 @@ import Square from './Square';
 import { BoardSquare, GameMove } from './app/engine/ChessElements';
 import Piece from './Piece';
 
-export interface SquareSelectedEvent extends CustomEvent<BoardSquare> { }
+export type SquareSelectedEvent = CustomEvent<BoardSquare>;
 
-export interface MoveSelectedEvent extends CustomEvent<GameMove> { }
+export type MoveSelectedEvent = CustomEvent<GameMove>;
 
 interface GameProps {
     gameBoard: Chess.Board,
@@ -17,12 +17,12 @@ interface GameProps {
 
 const Game: FC<GameProps> = ({ gameBoard, orientation, handleMoveInput }) => {
 
-    const [selectedFromSquare, setSelectedFromSquare] = useState<BoardSquare>(null);
+    const [selectedFromSquare, setSelectedFromSquare] = useState<BoardSquare | null>(null);
 
     const onSquareSelected = (event: SquareSelectedEvent) => {
         const selectedSquare = event.detail;
         if (event.type === "squareSelected") {
-            if (!!selectedFromSquare) {
+            if (selectedFromSquare) {
                 moveSelected(selectedFromSquare, selectedSquare);
             } else {
                 setSelectedFromSquare(selectedSquare);
@@ -36,7 +36,7 @@ const Game: FC<GameProps> = ({ gameBoard, orientation, handleMoveInput }) => {
 
     const moveSelected = (fromSquare: BoardSquare, toSquare: BoardSquare) => {
         const validatedMove = gameBoard.isLegalMove({ fromSquare: fromSquare, toSquare: toSquare });
-        if (!!validatedMove) {
+        if (validatedMove) {
             handleMoveInput(new CustomEvent("humanMove", { detail: validatedMove }));
         } else {
             console.log("Invalid move!")
@@ -46,8 +46,8 @@ const Game: FC<GameProps> = ({ gameBoard, orientation, handleMoveInput }) => {
     }
 
     const squareDivs: JSX.Element[] = [];
-    for (var row = 0; row < 8; row++) {
-        for (var col = 0; col < 8; col++) {
+    for (let row = 0; row < 8; row++) {
+        for (let col = 0; col < 8; col++) {
             const file = (orientation === Chess.Player.White ? col + 1 : 8 - col);
             const rank = (orientation === Chess.Player.White ? 8 - row : row + 1);
             const squareName = `${String.fromCharCode(96 + file)}${String(rank)}`
@@ -63,7 +63,7 @@ const Game: FC<GameProps> = ({ gameBoard, orientation, handleMoveInput }) => {
     }
 
     const pieceElements: JSX.Element[] = [];
-    gameBoard.forEachOccupiedSquareBeforeAnimation((os,animation) => pieceElements.push(
+    gameBoard.forEachOccupiedSquareBeforeAnimation((os, animation) => pieceElements.push(
         <Piece key={os.square.index + "_" + os.piece.piece + "_" + os.piece.player}
             occupiedSquare={os}
             animatingMove={animation}

@@ -25,8 +25,6 @@ function App() {
 
   function createPlayerForNextMove(playersBoard: Chess.Board, gamePairing: GamePairing): ISingleMovePlayer {
 
-    let currPlayer: ISingleMovePlayer;
-
     const handleMoveMade = (e: MoveEvent) => {
 
       // This is called at the end of the Player's life, after they have chosen
@@ -57,7 +55,7 @@ function App() {
       createAndSetPlayerForNextMove(newBoard, gamePairing);
       return currPlayer;
     };
-    currPlayer = gamePairing.createPlayerForNextMove(playersBoard, handleMoveMade);
+    const currPlayer: ISingleMovePlayer = gamePairing.createPlayerForNextMove(playersBoard, handleMoveMade);
     return currPlayer;
   }
 
@@ -76,7 +74,7 @@ function App() {
   function handlePairingSelected(e: PairingSelectedEvent) {
     const selectedPairing = e.detail;
     const initialBoard = selectedPairing.createBoard();
-    
+
     setBoard(initialBoard);
     setPairing(selectedPairing);
 

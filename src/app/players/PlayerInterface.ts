@@ -13,9 +13,9 @@ export interface ISingleMovePlayer {
     useProgressHandler: (handleProgress: (e: ProgressUpdatedEvent) => void) => void;
 }
 
-export interface MoveEvent extends CustomEvent<Chess.GameMove> { }
+export type MoveEvent = CustomEvent<Chess.GameMove | null>;
 
-export interface ProgressUpdatedEvent extends CustomEvent<number> { }
+export type ProgressUpdatedEvent = CustomEvent<number>;
 
 export class NullPlayer implements ISingleMovePlayer {
 
