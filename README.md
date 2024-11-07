@@ -48,3 +48,24 @@ export default tseslint.config({
   },
 })
 ```
+
+==========================================================================
+
+Carl note about Firebase.
+
+I deployed this app to GCP Firebase.  Here's what I did:
+
+First I created a Firebase project through the GCP web console (using Blaze PAYG).
+
+1. Run [ npm install -g firebase-tools ] to install firebase CLI
+2. Run [ firebase login ]
+3. Run [ firebase init hosting ]
+4. Run [ npm run build ] to put a prod build in the /dist folder.
+5. Run [ firebase deploy --only hosting ]
+6. Go into Firebase GCP web console and add custom domain
+7. Go to my DNS host provider and add the CNAME entry that GCP tells us to add.
+
+For subsequent deployments just need these:
+
+npm run build
+firebase deploy --only hosting
