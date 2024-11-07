@@ -1,12 +1,19 @@
 ﻿import * as Chess from './ChessElements';
 import MoveGenerator from './MoveGenerator';
 
+export enum Player {
+    White = 0,
+    Black = 1
+}
+
 export class BoardSquare {
 
     private squareIndex: number;
     private algebName: string;
     public readonly screenRank: number;
     public readonly screenFile: number;
+
+    public static readonly nullSquare: BoardSquare = new BoardSquare(9, 9, undefined);
 
     constructor(public readonly file: number, public readonly rank: number, orientation: Chess.Player = Chess.Player.White) {
         this.squareIndex = ((this.rank - 1) * 8) + (this.file - 1);
@@ -58,7 +65,7 @@ export enum CastlingPotential {
 export interface MoveAnimationDefinition {
     fromSquareIndex: number;
     toSquareIndex: number;
-    movingPiece: ColouredPiece;
+    movingPiece: ColouredPiece | null;
     capturedPiece?: ColouredPiece;
     captureSquareIndex?: number; // useful in en-passant, if null then just use toSquareIndex.
     finalPiece?: ColouredPiece; // useful in promotion, if null then just use movingPiece.
@@ -134,7 +141,7 @@ export class BoardResources {
         return piece.player * 7 + piece.piece;
     }
 
-    public static getCastlingAnimation(move: Chess.MoveAnimationDefinition, renderingSquareIndex: number): Chess.MoveAnimationDefinition {
+    public static getCastlingAnimation(move: Chess.MoveAnimationDefinition, renderingSquareIndex: number): Chess.MoveAnimationDefinition | null {
         if (!move.castlingType) {
             return null;
         }
@@ -225,11 +232,6 @@ export class BoardResources {
     }
 }
 
-export enum Player {
-    White = 0,
-    Black = 1
-}
-
 export enum PlayerType {
     Human = 0,
     Engine = 1
@@ -256,8 +258,10 @@ export class GameMove {
 
     private static pieceSymbols = ['ERROR', '', 'N', "B", "R", "Q", "K"];
 
-    fromSquare: BoardSquare;
-    toSquare: BoardSquare;
+    public static readonly blankMove: GameMove = { fromSquare: BoardSquare.nullSquare, toSquare: BoardSquare.nullSquare };
+
+    fromSquare!: BoardSquare;
+    toSquare!: BoardSquare;
     piece?: PieceType; // If this is not present, it's a pawn move or castling.
     isCapture?: boolean;
     isTheoreticalKingCapture?: boolean;
@@ -280,7 +284,7 @@ export class GameMove {
     }
 
     public static getNotation(move: GameMove): string {
-        if (!move) {
+        if (move === this.blankMove) {
             return ".."; // blank for when black moves first in a setup.
         }
         let checkSymbol = "";
@@ -334,23 +338,23 @@ export class Board {
 
     public static emptySquare: ColouredPiece = { player: Player.White, piece: PieceType.None };
 
-    public squares: number[];
+    public squares!: number[];
 
-    public isWhiteToMove: boolean;
+    public isWhiteToMove!: boolean;
 
     public getCurrentPlayer(): Chess.Player { return this.isWhiteToMove ? Chess.Player.White : Chess.Player.Black };
 
     public getNonCurrentPlayer(): Chess.Player { return this.isWhiteToMove ? Chess.Player.Black : Chess.Player.White };
 
-    public castlingStatus: number;
+    public castlingStatus!: number;
 
-    public enPassantActiveFile: number;
+    public enPassantActiveFile!: number;
 
-    public moveCount: number;
+    public moveCount!: number;
 
     public numPieces: number = 0;
 
-    public newMoveAnimation: MoveAnimationDefinition;
+    public newMoveAnimation!: MoveAnimationDefinition;
 
     public static create(whitePieces: { square: string, piece: PieceType }[],
         blackPieces: { square: string, piece: PieceType }[],
@@ -396,19 +400,19 @@ export class Board {
         });
     }
 
-    public forEachOccupiedSquareBeforeAnimation(fn: (s: OccupiedSquare, animation: MoveAnimationDefinition) => void,
+    public forEachOccupiedSquareBeforeAnimation(fn: (s: OccupiedSquare, animation?: MoveAnimationDefinition) => void,
         orientation: Chess.Player = Chess.Player.White,
         newMoveAnimation: MoveAnimationDefinition) {
 
         if (!newMoveAnimation) {
-            return this.forEachOccupiedSquare((os) => fn(os, null), orientation);
+            return this.forEachOccupiedSquare((os) => fn(os, undefined), orientation);
         }
 
         this.squares.forEach((pieceId: number, squareId: number) => {
             const resolvedAnimation = BoardResources.getCastlingAnimation(newMoveAnimation, squareId) ?? newMoveAnimation;
             if (squareId === resolvedAnimation.fromSquareIndex) {
                 // Report the moving piece as being on its start square.
-                const finalPiece = resolvedAnimation.finalPiece ? resolvedAnimation.finalPiece : resolvedAnimation.movingPiece;
+                const finalPiece = resolvedAnimation.finalPiece ? resolvedAnimation.finalPiece : resolvedAnimation.movingPiece!;
                 pieceId = BoardResources.colouredPieceToPieceId(finalPiece);
             }
             if (squareId === resolvedAnimation.toSquareIndex
@@ -434,7 +438,7 @@ export class Board {
         });
     }
 
-    public getPotentialMoves(includePawnAttacks?: boolean): GameMove[] {
+    public getPotentialMoves(includePawnAttacks: boolean = false): GameMove[] {
         let result: GameMove[] = [];
         const currPlayer = this.isWhiteToMove ? Player.White : Player.Black;
         this.forEachOccupiedSquare(occSquare => {
@@ -443,22 +447,22 @@ export class Board {
 
                 switch (occSquare.piece.piece) {
                     case PieceType.Knight:
-                        pieceMoves = MoveGenerator.getPotentialKnightMoves(this, occSquare.square);
+                        pieceMoves = MoveGenerator.getPotentialKnightMoves(this, occSquare.square)!;
                         break;
                     case PieceType.Pawn:
-                        pieceMoves = MoveGenerator.getPotentialPawnMoves(this, occSquare.square, includePawnAttacks, false);
+                        pieceMoves = MoveGenerator.getPotentialPawnMoves(this, occSquare.square, includePawnAttacks, false)!;
                         break;
                     case PieceType.King:
-                        pieceMoves = MoveGenerator.getPotentialKingMoves(this, occSquare.square);
+                        pieceMoves = MoveGenerator.getPotentialKingMoves(this, occSquare.square)!;
                         break;
                     case PieceType.Queen:
-                        pieceMoves = MoveGenerator.getPotentialQueenMoves(this, occSquare.square);
+                        pieceMoves = MoveGenerator.getPotentialQueenMoves(this, occSquare.square)!;
                         break;
                     case PieceType.Bishop:
-                        pieceMoves = MoveGenerator.getPotentialBishopMoves(this, occSquare.square, true);
+                        pieceMoves = MoveGenerator.getPotentialBishopMoves(this, occSquare.square, true)!;
                         break;
                     case PieceType.Rook:
-                        pieceMoves = MoveGenerator.getPotentialRookMoves(this, occSquare.square, true);
+                        pieceMoves = MoveGenerator.getPotentialRookMoves(this, occSquare.square, true)!;
                         break;
                     default:
                         pieceMoves = [];
@@ -519,7 +523,7 @@ export class Board {
         return result;
     }
 
-    public isLegalMove(move: GameMove): GameMove {
+    public isLegalMove(move: GameMove): GameMove | null {
 
         if (move.isPawnAttack) {
             return null;
@@ -639,9 +643,9 @@ export class Board {
         }
 
         //let castlingNullification = 0;
-        if (sideEffect > 0) {
+        if ((sideEffect || 0) > 0) {
             //castlingNullification = sideEffect & (MoveSideEffect.NullifiesKingsideCastling + MoveSideEffect.NullifiesQueensideCastling);
-            newBoard.castlingStatus = Board.getNewCastlingPotential(this.castlingStatus, sideEffect, this.isWhiteToMove);
+            newBoard.castlingStatus = Board.getNewCastlingPotential(this.castlingStatus, sideEffect!, this.isWhiteToMove);
             if (sideEffect === MoveSideEffect.EnablesEnPassantCapture) {
                 newBoard.enPassantActiveFile = move.fromSquare.file;
             }
@@ -665,7 +669,7 @@ export class Board {
         return playerHasLegalMove ? CheckState.None : CheckState.Stalemate;
     }
 
-    public getMoveDisambiguationSquare(move: GameMove): string {
+    public getMoveDisambiguationSquare(move: GameMove): string | undefined {
 
         // If another knight, rook, queen (or even a promoted bishop!) could make this move, return its location.
         // Otherwise return null.
@@ -674,7 +678,7 @@ export class Board {
         const toIndex = move.toSquare.index;
         const movingPiece = this.getSquarePieceByIndex(fromIndex).piece;
         if (movingPiece === PieceType.Pawn || movingPiece === PieceType.King) {
-            return null;
+            return undefined;
         }
 
         const potentialMoves = this.getPotentialMoves();
@@ -690,7 +694,7 @@ export class Board {
         if (ambiguousMove.length) {
             return ambiguousMove[0].fromSquare.algebraicNotation;
         }
-        return null;
+        return undefined;
     }
 
     private static getNewCastlingPotential(originalPotential: number, castlingNullifications: number, isWhiteToMove: boolean) {

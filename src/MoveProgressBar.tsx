@@ -5,7 +5,7 @@ import { FC, useState } from 'react'
 import { ISingleMovePlayer, ProgressUpdatedEvent } from './app/players/PlayerInterface';
 
 interface ProgressBarProps {
-    player: ISingleMovePlayer
+    player: ISingleMovePlayer | null
 }
 
 const MoveProgressBar: FC<ProgressBarProps> = ({ player }) => {

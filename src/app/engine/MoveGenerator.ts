@@ -8,7 +8,7 @@ export default class MoveGenerator {
     private static rookVectors = [[0, 1], [0, -1], [1, 0], [-1, 0]];
     private static bishopVectors = [[1, 1], [1, -1], [-1, 1], [-1, -1]];
 
-    public static getPotentialKnightMoves(board: Chess.Board, fromSquare: Chess.BoardSquare, findKingCaptureOnly?: boolean): Chess.GameMove[] {
+    public static getPotentialKnightMoves(board: Chess.Board, fromSquare: Chess.BoardSquare, findKingCaptureOnly?: boolean): Chess.GameMove[] | null {
         let result: Chess.GameMove[] = [];
         const opponentColour = board.isWhiteToMove ? Chess.Player.Black : Chess.Player.White;
         for (let i = 0; i < 8; i++) {
@@ -39,7 +39,7 @@ export default class MoveGenerator {
         return result;
     }
 
-    public static getPotentialPawnMoves(board: Chess.Board, fromSquare: Chess.BoardSquare, includeSquareAttacks: boolean, findKingCaptureOnly?: boolean): Chess.GameMove[] {
+    public static getPotentialPawnMoves(board: Chess.Board, fromSquare: Chess.BoardSquare, includeSquareAttacks: boolean, findKingCaptureOnly?: boolean): Chess.GameMove[] | null {
         let result: Chess.GameMove[] = [];
         const opponentColour = board.isWhiteToMove ? Chess.Player.Black : Chess.Player.White;
         const direction = board.isWhiteToMove ? 1 : -1;
@@ -118,7 +118,7 @@ export default class MoveGenerator {
         return result;
     }
 
-    public static getPotentialKingMoves(board: Chess.Board, fromSquare: Chess.BoardSquare, findKingCaptureOnly?: boolean): Chess.GameMove[] {
+    public static getPotentialKingMoves(board: Chess.Board, fromSquare: Chess.BoardSquare, findKingCaptureOnly?: boolean): Chess.GameMove[] | null {
         let result: Chess.GameMove[] = [];
         const opponentColour = board.isWhiteToMove ? Chess.Player.Black : Chess.Player.White;
         for (let i = -1; i <= 1; i++) {
@@ -205,7 +205,7 @@ export default class MoveGenerator {
         return result;
     }
 
-    public static getPotentialRookMoves(board: Chess.Board, fromSquare: Chess.BoardSquare, inRookContext: boolean, findKingCaptureOnly?: boolean): Chess.GameMove[] {
+    public static getPotentialRookMoves(board: Chess.Board, fromSquare: Chess.BoardSquare, inRookContext: boolean, findKingCaptureOnly?: boolean): Chess.GameMove[] | null {
 
         let castlingEffect = Chess.MoveSideEffect.None;
         if (inRookContext) {
@@ -255,7 +255,7 @@ export default class MoveGenerator {
         return result;
     }
 
-    public static getPotentialBishopMoves(board: Chess.Board, fromSquare: Chess.BoardSquare, inBishopContext: boolean, findKingCaptureOnly?: boolean): Chess.GameMove[] {
+    public static getPotentialBishopMoves(board: Chess.Board, fromSquare: Chess.BoardSquare, inBishopContext: boolean, findKingCaptureOnly?: boolean): Chess.GameMove[] | null {
         let result: Chess.GameMove[] = [];
         const opponentColour = board.isWhiteToMove ? Chess.Player.Black : Chess.Player.White;
         for (let i = 0; i < 4; i++) {
@@ -292,7 +292,7 @@ export default class MoveGenerator {
         return result;
     }
 
-    public static getPotentialQueenMoves(board: Chess.Board, fromSquare: Chess.BoardSquare, findKingCaptureOnly?: boolean): Chess.GameMove[] {
+    public static getPotentialQueenMoves(board: Chess.Board, fromSquare: Chess.BoardSquare, findKingCaptureOnly?: boolean): Chess.GameMove[] | null {
 
         if (findKingCaptureOnly) {
             if (MoveGenerator.getPotentialBishopMoves(board, fromSquare, false, true) !== null) {
@@ -304,8 +304,8 @@ export default class MoveGenerator {
             return null;
         }
 
-        return MoveGenerator.getPotentialRookMoves(board, fromSquare, false).concat(
-            MoveGenerator.getPotentialBishopMoves(board, fromSquare, false)
+        return MoveGenerator.getPotentialRookMoves(board, fromSquare, false)!.concat(
+            MoveGenerator.getPotentialBishopMoves(board, fromSquare, false)!
         );
     }
 }

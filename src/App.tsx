@@ -79,7 +79,7 @@ function App() {
     setPairing(selectedPairing);
 
     if (!initialBoard.isWhiteToMove) {
-      setMoveList([null]); // blank move for white since black starts.
+      setMoveList([Chess.GameMove.blankMove]); // blank move for white since black starts.
     }
 
     setPlayerForFirstMove(initialBoard, selectedPairing);
@@ -97,7 +97,7 @@ function App() {
             <PairingSelector
               handlePairingSelected={handlePairingSelected} />
           ) :
-          (<Game gameBoard={board} handleMoveInput={onHumanMoveSelected} orientation={boardOrientation} />)
+          (<Game gameBoard={board!} handleMoveInput={onHumanMoveSelected} orientation={boardOrientation} />)
         }
       </header>
     </div>
