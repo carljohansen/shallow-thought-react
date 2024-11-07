@@ -5,10 +5,10 @@ import { MoveEvent, ISingleMovePlayer } from './PlayerInterface';
 
 export default class GamePairing {
 
-    private _firstMover: Chess.Player;
+    private _firstMover?: Chess.Player;
 
     public get firstMover(): number {
-        return this._firstMover;
+        return this._firstMover || Chess.Player.White;
     }
 
     constructor(public readonly whitePlayerType: Chess.PlayerType,

@@ -4,8 +4,8 @@ import { ISingleMovePlayer, MoveEvent, ProgressUpdatedEvent } from './PlayerInte
 export class ArtificialSingleMovePlayer implements ISingleMovePlayer {
 
     private engineWorker: Worker | undefined;
-    private playedMove: Chess.GameMove;
-    private handleProgress: (e: ProgressUpdatedEvent) => void;
+    private playedMove?: Chess.GameMove;
+    private handleProgress?: (e: ProgressUpdatedEvent) => void;
 
     constructor(public readonly board: Chess.Board,
         public readonly handleMove: (e: MoveEvent) => void) {
@@ -26,7 +26,9 @@ export class ArtificialSingleMovePlayer implements ISingleMovePlayer {
             this.engineWorker = new Worker(new URL('../../artificialPlayerDispatch.ts', import.meta.url), { type: 'module' });
             this.engineWorker.onmessage = this.onMoveDecision;
         }
-        this.handleProgress(new CustomEvent("progress", { detail: 0 }));
+        if (this.handleProgress) {
+            this.handleProgress(new CustomEvent("progress", { detail: 0 }));
+        }
         this.engineWorker.postMessage(this.board);
     }
 
@@ -40,7 +42,9 @@ export class ArtificialSingleMovePlayer implements ISingleMovePlayer {
 
         let progress: number | null;
         if ((progress = matchProgress(e.data)) !== null) {
-            this.handleProgress(new CustomEvent("progress", { detail: progress }));
+            if (this.handleProgress) {
+                this.handleProgress(new CustomEvent("progress", { detail: progress }));
+            }
             return;
         }
 

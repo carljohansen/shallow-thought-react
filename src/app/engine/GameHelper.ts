@@ -85,7 +85,7 @@ export default class GameHelper {
                 const squareJump = parseInt(currChar);
                 currFile += squareJump;
             } else {
-                let currPiece: Chess.PieceType = null;
+                let currPiece: Chess.PieceType | null = null;
                 switch (currChar) {
                     case expectedRook:
                         currPiece = Chess.PieceType.Rook;
@@ -130,6 +130,9 @@ export default class GameHelper {
 
         const regex = /\s*([bw])\s+/;
         let matches = regex.exec(boardFen.substring(startPos) + " ");
+        if (!matches) {
+            throw "Could not read next move";
+        }
         const mainMatch = matches[1];
         const newPos = startPos + matches[0].length;
 
@@ -144,6 +147,9 @@ export default class GameHelper {
 
         const regex = /\s*([KQkq-]+)\s+/;
         let matches = regex.exec(boardFen.substring(startPos) + " ");
+        if (!matches) {
+            throw "Could not read castling state";
+        }
         const castlingStateFen = matches[1];
         const newPos = startPos + matches[0].length;
 
@@ -172,6 +178,9 @@ export default class GameHelper {
 
         const regex = /\s*([a-h0-8-]+)\s+/;
         let matches = regex.exec(boardFen.substring(startPos) + " ");
+        if (!matches) {
+            throw "Could not read en passant state";
+        }
         const enPassantFen = matches[1];
         const newPos = startPos + matches[0].length;
 
