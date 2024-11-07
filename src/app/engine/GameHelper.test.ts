@@ -7,9 +7,9 @@ test('reads pieces from FEN', () => {
 
     //const testFen = 'RNbQk3/PP2PP2/8/7B b qK -';
     const testFen = "r1bq2r1/b4pk1/p1pp1p2/1p2pP2/1P2P1PB/3P4/1PPQ2P1/R3K2R w";
-    
-    const [actualPiecesWhite, actualEndPos] = GameHelper.readPieces(testFen, 0, Chess.Player.White);
-    const [actualPiecesBlack, actualEndPos2] = GameHelper.readPieces(testFen, 0, Chess.Player.Black);
+
+    const [_actualPiecesWhite, _actualEndPos] = GameHelper.readPieces(testFen, 0, Chess.Player.White);
+    const [_actualPiecesBlack, _actualEndPos2] = GameHelper.readPieces(testFen, 0, Chess.Player.Black);
 
     const actualBoard = GameHelper.createBoardFromFen(testFen);
 

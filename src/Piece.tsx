@@ -46,10 +46,10 @@ const Piece: FC<PieceProps> = ({ occupiedSquare, animatingMove, orientation }) =
     let pieceColour = occupiedSquare.piece.player;
     if (animatingMove) {
         if (animatingMove.fromSquareIndex === occupiedSquare.square.index) {
-            pieceColour = animatingMove.movingPiece.player;
+            pieceColour = animatingMove.movingPiece!.player;
         }
         else if (animatingMove.toSquareIndex === occupiedSquare.square.index) {
-            pieceColour = animatingMove.capturedPiece.player;
+            pieceColour = animatingMove.capturedPiece!.player;
         }
     }
 
