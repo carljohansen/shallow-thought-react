@@ -4,8 +4,7 @@ import { ISingleMovePlayer, MoveEvent, ProgressUpdatedEvent } from './PlayerInte
 export class HumanSingleMovePlayer implements ISingleMovePlayer {
 
     private isActive: boolean = false;
-    private playedMove: Chess.GameMove;
-    private handleProgress: (e: ProgressUpdatedEvent) => void;
+    private handleProgress?: (e: ProgressUpdatedEvent) => void;
 
     constructor(public readonly board: Chess.Board,
         public readonly handleMove: (e: MoveEvent) => void) {
@@ -17,9 +16,11 @@ export class HumanSingleMovePlayer implements ISingleMovePlayer {
 
     activate(): void {
         this.isActive = true;
-        this.handleProgress(new CustomEvent("progress", { detail: 0 }));
+        if (this.handleProgress) {
+            this.handleProgress(new CustomEvent("progress", { detail: 0 }));
+        }
     }
-    
+
     dispose(): void {
     }
 

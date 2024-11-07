@@ -23,6 +23,6 @@ export class NullPlayer implements ISingleMovePlayer {
     }
     dispose(): void {
     }
-    handleMoveSelection: (e: MoveEvent) => void;
-    useProgressHandler: (handleProgress: (e: ProgressUpdatedEvent) => void) => void;
+    handleMoveSelection: (e: MoveEvent) => void = () => { };
+    useProgressHandler: (handleProgress: (e: ProgressUpdatedEvent) => void) => void = () => { };
 }
