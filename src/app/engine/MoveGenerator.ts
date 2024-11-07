@@ -9,14 +9,14 @@ export default class MoveGenerator {
     private static bishopVectors = [[1, 1], [1, -1], [-1, 1], [-1, -1]];
 
     public static getPotentialKnightMoves(board: Chess.Board, fromSquare: Chess.BoardSquare, findKingCaptureOnly?: boolean): Chess.GameMove[] | null {
-        let result: Chess.GameMove[] = [];
+        const result: Chess.GameMove[] = [];
         const opponentColour = board.isWhiteToMove ? Chess.Player.Black : Chess.Player.White;
         for (let i = 0; i < 8; i++) {
             const currVector = MoveGenerator.knightVectors[i];
             const newRank = fromSquare.rank + currVector[0];
             const newFile = fromSquare.file + currVector[1];
             if (Chess.BoardResources.isValidSquare(newFile, newRank)) {
-                var destSquare = board.getSquarePiece(newFile, newRank);
+                const destSquare = board.getSquarePiece(newFile, newRank);
                 const capturePiece = destSquare.piece;
                 if (capturePiece === Chess.PieceType.None
                     || destSquare.player === opponentColour) {
@@ -40,7 +40,7 @@ export default class MoveGenerator {
     }
 
     public static getPotentialPawnMoves(board: Chess.Board, fromSquare: Chess.BoardSquare, includeSquareAttacks: boolean, findKingCaptureOnly?: boolean): Chess.GameMove[] | null {
-        let result: Chess.GameMove[] = [];
+        const result: Chess.GameMove[] = [];
         const opponentColour = board.isWhiteToMove ? Chess.Player.Black : Chess.Player.White;
         const direction = board.isWhiteToMove ? 1 : -1;
         // 1. Captures.
@@ -119,7 +119,7 @@ export default class MoveGenerator {
     }
 
     public static getPotentialKingMoves(board: Chess.Board, fromSquare: Chess.BoardSquare, findKingCaptureOnly?: boolean): Chess.GameMove[] | null {
-        let result: Chess.GameMove[] = [];
+        const result: Chess.GameMove[] = [];
         const opponentColour = board.isWhiteToMove ? Chess.Player.Black : Chess.Player.White;
         for (let i = -1; i <= 1; i++) {
             for (let j = -1; j <= 1; j++) {
@@ -129,7 +129,7 @@ export default class MoveGenerator {
                 const newRank = fromSquare.rank + i;
                 const newFile = fromSquare.file + j;
                 if (Chess.BoardResources.isValidSquare(newFile, newRank)) {
-                    var destSquare = board.getSquarePiece(newFile, newRank);
+                    const destSquare = board.getSquarePiece(newFile, newRank);
                     const capturePiece = destSquare.piece;
                     if (capturePiece === Chess.PieceType.None
                         || destSquare.player === opponentColour) {
@@ -161,8 +161,8 @@ export default class MoveGenerator {
             || (!board.isWhiteToMove && (board.castlingStatus & Chess.CastlingPotential.BlackQueenside));
 
         if (potentialKingside || potentialQueenside) {
-            let potentialCastlingMoveFiles = [];
-            let castlingRank = board.isWhiteToMove ? 1 : 8;
+            const potentialCastlingMoveFiles = [];
+            const castlingRank = board.isWhiteToMove ? 1 : 8;
             if (potentialKingside) {
                 // We're told that white can potentially castle kingside, so we assume king and rook are on the right squares!
                 potentialCastlingMoveFiles.push([6, 7, 0]);
@@ -182,7 +182,7 @@ export default class MoveGenerator {
                     if (currentCheckState === 0) {
                         // Make sure we're not in check.
                         board.isWhiteToMove = !board.isWhiteToMove;
-                        let isInCheck = board.playerHasTheoreticalKingCapture();
+                        const isInCheck = board.playerHasTheoreticalKingCapture();
                         board.isWhiteToMove = !board.isWhiteToMove;
                         if (isInCheck) {
                             currentCheckState = 1;
@@ -191,8 +191,8 @@ export default class MoveGenerator {
                         }
                     }
                     if (currentCheckState === 2) {
-                        let transitCheckMove: Chess.GameMove = { fromSquare: fromSquare, toSquare: Chess.BoardResources.byFileAndRank(transitFile, castlingRank) };
-                        let transitCheckBoard = board.applyMove(transitCheckMove);
+                        const transitCheckMove: Chess.GameMove = { fromSquare: fromSquare, toSquare: Chess.BoardResources.byFileAndRank(transitFile, castlingRank) };
+                        const transitCheckBoard = board.applyMove(transitCheckMove);
                         if (!transitCheckBoard.playerHasTheoreticalKingCapture()) {
                             result.push({
                                 fromSquare: fromSquare, toSquare: Chess.BoardResources.byFileAndRank(destFile, castlingRank)
@@ -217,7 +217,7 @@ export default class MoveGenerator {
             }
         }
 
-        let result: Chess.GameMove[] = [];
+        const result: Chess.GameMove[] = [];
         const opponentColour = board.isWhiteToMove ? Chess.Player.Black : Chess.Player.White;
         for (let i = 0; i < 4; i++) {
             for (let j = 1; j <= 7; j++) {
@@ -227,7 +227,7 @@ export default class MoveGenerator {
                 if (!Chess.BoardResources.isValidSquare(newFile, newRank)) {
                     break;
                 }
-                var destSquare = board.getSquarePiece(newFile, newRank);
+                const destSquare = board.getSquarePiece(newFile, newRank);
                 const capturePiece = destSquare.piece;
                 if (capturePiece === Chess.PieceType.None
                     || destSquare.player === opponentColour) {
@@ -256,7 +256,7 @@ export default class MoveGenerator {
     }
 
     public static getPotentialBishopMoves(board: Chess.Board, fromSquare: Chess.BoardSquare, inBishopContext: boolean, findKingCaptureOnly?: boolean): Chess.GameMove[] | null {
-        let result: Chess.GameMove[] = [];
+        const result: Chess.GameMove[] = [];
         const opponentColour = board.isWhiteToMove ? Chess.Player.Black : Chess.Player.White;
         for (let i = 0; i < 4; i++) {
             for (let j = 1; j <= 7; j++) {
@@ -266,7 +266,7 @@ export default class MoveGenerator {
                 if (!Chess.BoardResources.isValidSquare(newFile, newRank)) {
                     break;
                 }
-                var destSquare = board.getSquarePiece(newFile, newRank);
+                const destSquare = board.getSquarePiece(newFile, newRank);
                 const capturePiece = destSquare.piece;
                 if (capturePiece === Chess.PieceType.None
                     || destSquare.player === opponentColour) {

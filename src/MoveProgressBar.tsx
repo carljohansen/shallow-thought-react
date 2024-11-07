@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error This 3rd party library does not provide TS support.
 import { Progress } from 'react-sweet-progress';
 import "react-sweet-progress/lib/style.css";
 import './app/ui/css/progressbar.component.css';

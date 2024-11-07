@@ -59,7 +59,9 @@ function App() {
     return currPlayer;
   }
 
-  const onHumanMoveSelected = (e: MoveSelectedEvent) => { player && player.handleMoveSelection(e); }
+  const onHumanMoveSelected = (e: MoveSelectedEvent) => {
+    if (player) { player.handleMoveSelection(e); }
+  }
 
   function setPlayerForFirstMove(initialBoard: Chess.Board, pairing: GamePairing) {
     createAndSetPlayerForNextMove(initialBoard, pairing);

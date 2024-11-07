@@ -17,10 +17,10 @@ export class ComputerPlayer {
 
     public getMovesAndReplies(board: Chess.Board, headStartMoves: Chess.GameMove[] | null): MoveWithReplies[] {
 
-        let initialMoves = headStartMoves || board.getPotentialMoves(true);
+        const initialMoves = headStartMoves || board.getPotentialMoves(true);
         const playerMoves = initialMoves.map(move => { return { move: move, replies: [] } as MoveWithReplies; });
 
-        for (let move of playerMoves) {
+        for (const move of playerMoves) {
             if (move.move.isPawnAttack) {
                 move.replies = [];
             } else {
@@ -61,7 +61,7 @@ export class ComputerPlayer {
             return { move: null, score: board.isWhiteToMove ? -(gameEndingScore - depth) : (gameEndingScore - depth) };
         }
 
-        let maxDepth = isCaptureChain ? 6 : 4;
+        const maxDepth = isCaptureChain ? 6 : 4;
 
         let bestMoveSoFar: Chess.GameMove | null = null;
         let bestScoreSoFar: number | null = null;
@@ -75,9 +75,9 @@ export class ComputerPlayer {
             return { move: null, score: EvaluationFunction.getEvaluation(board, movesAndReplies, opponentAttacks) };
         }
 
-        let numMoves = movesAndReplies.length;
+        const numMoves = movesAndReplies.length;
         let movesEvaluated = 0;
-        for (let move of movesAndReplies) {
+        for (const move of movesAndReplies) {
 
             if (depth === 0) {
                 this.calculationProgress$.next(Math.floor((movesEvaluated++ / numMoves) * 100));
@@ -87,11 +87,9 @@ export class ComputerPlayer {
                 continue;
             }
 
-            let lineEvaluation: number;
-
             const boardAfterMove = board.applyMove(move.move);
-            let bestReply = this.getBestMoveMinimax(boardAfterMove, move.replies, depth + 1, isCaptureChain && (move.move.isCapture || false), bestScoreSoFar);
-            lineEvaluation = bestReply.score;
+            const bestReply = this.getBestMoveMinimax(boardAfterMove, move.replies, depth + 1, isCaptureChain && (move.move.isCapture || false), bestScoreSoFar);
+            const lineEvaluation: number = bestReply.score;
 
             if (!bestMoveSoFar
                 || ComputerPlayer.isBetterScore(lineEvaluation, bestScoreSoFar, board.isWhiteToMove)) {
@@ -161,7 +159,7 @@ class EvaluationFunction {
             result += EvaluationFunction.materialValues[square.piece.piece] * scoreScaler[square.piece.player];
         });
 
-        for (let move of movesAndReplies) {
+        for (const move of movesAndReplies) {
             if ((!move.move.isPawnAttack)
                 && move.replies.some(reply => reply.isTheoreticalKingCapture)) {
                 continue; // move is not legal.
@@ -176,7 +174,7 @@ class EvaluationFunction {
                 * EvaluationFunction.pieceAttackWeights[movingPieceType]
                 * scoreScaler[playerIndex];
         }
-        for (let reply of opponentAttacks) {
+        for (const reply of opponentAttacks) {
 
             const movingPieceType = board.getSquarePieceByIndex(reply.fromSquare.index).piece;
             if (movingPieceType === Chess.PieceType.Pawn

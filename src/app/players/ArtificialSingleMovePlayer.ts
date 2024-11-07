@@ -48,7 +48,7 @@ export class ArtificialSingleMovePlayer implements ISingleMovePlayer {
             return;
         }
 
-        const chosenMoveAsObj = e.data;
+        const chosenMoveAsObj = <Chess.GameMove>e.data;
         if (!chosenMoveAsObj) {
             // We are unable to move.  It's either mate or stalemate.
             this.handleMove(new CustomEvent("UnableToMove", { detail: null }));

@@ -129,7 +129,7 @@ export default class GameHelper {
     private static readNextMover(boardFen: string, startPos: number): [nextMover: Chess.Player, endPos: number] {
 
         const regex = /\s*([bw])\s+/;
-        let matches = regex.exec(boardFen.substring(startPos) + " ");
+        const matches = regex.exec(boardFen.substring(startPos) + " ");
         if (!matches) {
             throw "Could not read next move";
         }
@@ -146,7 +146,7 @@ export default class GameHelper {
         }
 
         const regex = /\s*([KQkq-]+)\s+/;
-        let matches = regex.exec(boardFen.substring(startPos) + " ");
+        const matches = regex.exec(boardFen.substring(startPos) + " ");
         if (!matches) {
             throw "Could not read castling state";
         }
@@ -177,7 +177,7 @@ export default class GameHelper {
         }
 
         const regex = /\s*([a-h0-8-]+)\s+/;
-        let matches = regex.exec(boardFen.substring(startPos) + " ");
+        const matches = regex.exec(boardFen.substring(startPos) + " ");
         if (!matches) {
             throw "Could not read en passant state";
         }

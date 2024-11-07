@@ -3,7 +3,6 @@
 import * as Chess from './app/engine/ChessElements'
 import { ComputerPlayer } from './app/engine/Evaluation';
 
-/* eslint-disable-next-line no-restricted-globals */
 const thisSelf = self;
 
 onmessage = function (event) {
@@ -24,6 +23,5 @@ onmessage = function (event) {
     const selectedMove = computerPlayer.getBestMove(board);
 
     // Send our selected move back to the main thread.
-    /* eslint-disable-next-line no-restricted-globals */
     thisSelf.postMessage(selectedMove);
 }

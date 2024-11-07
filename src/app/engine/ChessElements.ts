@@ -270,7 +270,7 @@ export class GameMove {
     checkHint?: CheckState;
     disambiguationSquare?: string;
 
-    public static deserialize(serializedMove: any): GameMove {
+    public static deserialize(serializedMove: GameMove): GameMove {
         const fromSquare = new BoardSquare(serializedMove.fromSquare.file, serializedMove.fromSquare.rank);
         const toSquare = new BoardSquare(serializedMove.toSquare.file, serializedMove.toSquare.rank);
         return {
@@ -365,7 +365,7 @@ export class Board {
         const allPieces = [whitePieces, blackPieces];
         newBoard.numPieces = whitePieces.length + blackPieces.length;
         for (let colour = 0; colour < 2; colour++) {
-            let currPieces = allPieces[colour];
+            const currPieces = allPieces[colour];
             for (let i = 0; i < currPieces.length; i++) {
                 const destSquare = BoardResources.byAlgebraic(currPieces[i].square).index;
                 newBoard.squares[destSquare] = colour * 7 + currPieces[i].piece;
@@ -442,7 +442,7 @@ export class Board {
         let result: GameMove[] = [];
         const currPlayer = this.isWhiteToMove ? Player.White : Player.Black;
         this.forEachOccupiedSquare(occSquare => {
-            var pieceMoves: GameMove[];
+            let pieceMoves: GameMove[];
             if (occSquare.piece.player === currPlayer) {
 
                 switch (occSquare.piece.piece) {
@@ -482,7 +482,7 @@ export class Board {
 
     public playerHasTheoreticalKingCapture(): boolean {
         const currPlayer = this.isWhiteToMove ? Player.White : Player.Black;
-        var hasKingCapture = false;
+        let hasKingCapture = false;
         this.forEachOccupiedSquare(occSquare => {
             if (!hasKingCapture && occSquare.piece.player === currPlayer) {
 
@@ -518,7 +518,7 @@ export class Board {
     }
 
     public get occupiedSquares(): OccupiedSquare[] {
-        let result: OccupiedSquare[] = [];
+        const result: OccupiedSquare[] = [];
         this.forEachOccupiedSquare(piece => result.push(piece));
         return result;
     }
@@ -539,7 +539,7 @@ export class Board {
             return null;
         }
         // Make sure the move wouldn't leave the player in check.
-        var tempBoard = this.applyMove(matchingMove);
+        const tempBoard = this.applyMove(matchingMove);
         return tempBoard.playerHasTheoreticalKingCapture()
             ? null
             : matchingMove;
@@ -685,7 +685,7 @@ export class Board {
         // See if another piece of this type could move to the destination square.  We ignore checks,
         // which could mean that we disambiguate a move that actually doesn't need it, but that's not a huge deal.
 
-        let ambiguousMove = potentialMoves.filter(checkMove =>
+        const ambiguousMove = potentialMoves.filter(checkMove =>
             checkMove.fromSquare.index !== fromIndex
             && checkMove.toSquare.index === toIndex
             && checkMove.piece === movingPiece
