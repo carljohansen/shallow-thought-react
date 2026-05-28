@@ -56,7 +56,7 @@ const Game: FC<GameProps> = ({ gameBoard, orientation, handleMoveInput }) => {
                 (<Square key={row * 8 + col}
                     isLight={(row % 2) === (col % 2)}
                     boardSquare={new BoardSquare(file, rank, orientation)}
-                    isHighlighed={isSquareSelected}
+                    isHighlighted={isSquareSelected}
                     handleClick={onSquareSelected} />)
             )
         }
